@@ -169,12 +169,13 @@ const Dashboard = () => {
 
 
 
-        {/* Today’s Irrigation Call” should include: */}
-
+        {/* Today’s Irrigation Call”  */}
 
   <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5">
     <CardHeader className="border-b-2 border-border/50 bg-card/50">
       <CardTitle className="text-3xl font-display font-bold text-foreground flex items-center">
+        
+        <Droplet className="h-8 w-8 mr-3 text-primary" />
         Today’s Irrigation Call
       </CardTitle>
     </CardHeader>
@@ -196,21 +197,61 @@ const Dashboard = () => {
           {/* Low Zones List */}
           {lowMoistureZones.length > 0 && (
             <div>
-              <h4 className="font-semibold text-base mb-2 text-destructive flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-destructive" /> Low Zones
-              </h4>
+              
+               <h3 className="text-xl flex items-center gap-2  font-display font-bold text-foreground mb-4"> <AlertCircle className="h-5 w-5 text-destructive" /> Low Zones</h3>
               <ul className="space-y-2">
                 {lowMoistureZones.map((zone, idx) => {
                   // Extract days from lastIrrigation string (e.g., "36 hours ago" -> 1.5 days)
                   const match = zone.lastIrrigation.match(/(\d+)(?:\s*hours?)/i);
                   const days = match ? (parseInt(match[1], 10) / 24).toFixed(1) : zone.lastIrrigation;
                   return (
-                    <li key={zone.zone} className="flex items-center gap-4 bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-2">
-                      <span className="font-bold text-foreground text-base min-w-[100px]">{zone.zone}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-700 text-xs font-semibold border border-yellow-400/40">Watch</span>
-                      <span className="text-sm text-muted-foreground">{days} days since last</span>
-                      <span className="text-xs font-medium text-primary bg-primary/10 rounded px-2 py-0.5 ml-2">Suggested: 2–3 days</span>
-                    </li>
+
+
+                    
+                    <div
+                      key={zone.zone}
+                      className="border-2 border-yellow-400/70 bg-yellow-50/80 rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between shadow-industrial hover:shadow-lg transition-shadow"
+                    >
+                      <div className="flex items-center gap-4 mb-3 md:mb-0">
+                        <span className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-yellow-100 border-2 border-yellow-300 shadow-inner">
+                          <AlertCircle className="h-6 w-6 text-yellow-600" />
+                        </span>
+                        <div>
+                          <div className="font-display font-bold text-lg text-yellow-900">{zone.zone}</div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400">
+                              {zone.status}
+                            </span>
+                            <span className="text-xs text-yellow-700 font-semibold">
+                              {zone.moisture}% moisture
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col md:flex-row md:items-center gap-6">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-yellow-700" />
+                          <span className="text-sm text-muted-foreground">Last:</span>
+                          <span className="font-bold text-yellow-900 text-base">{days} days ago</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Droplet className="h-4 w-4 text-primary" />
+                          <span className="text-sm text-muted-foreground">Suggested:</span>
+                          <span className="font-bold text-primary text-base">2–3 days</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Battery className="h-4 w-4 text-yellow-700" />
+                          <span className="text-sm text-muted-foreground">Battery:</span>
+                          <span className="font-bold text-yellow-900 text-base">{zone.batteryVoltage}V</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Signal className="h-4 w-4 text-yellow-700" />
+                          <span className="text-sm text-muted-foreground">Signal:</span>
+                          <span className="font-bold text-yellow-900 text-base">{zone.signalStrength}%</span>
+                        </div>
+                      </div>
+                    </div>
+                    
                   );
                 })}
               </ul>
@@ -218,10 +259,16 @@ const Dashboard = () => {
           )}
 
           {/* Weather Note */}
-          <div className="flex items-center gap-2 mt-4 text-blue-700 bg-blue-100/60 rounded px-3 py-2 w-fit">
-            <CloudRain className="h-5 w-5 text-blue-500" />
-            <span className="text-sm font-medium">Rain expected in 6 hours.</span>
-          </div>
+       <div className="flex items-center justify-between">
+           <div className="bg-accent/10 border-1 rounded-lg p-3 shadow-industrial text-blue-700 bg-blue-100/60">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                           <CloudRain className="h-5 w-5 text-blue-500" />
+                          <h3 className="flex  text-lg font-display font-medium  mb-0"> Rain expected in 6 hours</h3>
+                                                  </div>
+                        
+                      </div>
+                    </div>
 
           {/* View All Zones Button */}
           <div className="mt-6">
@@ -229,12 +276,10 @@ const Dashboard = () => {
               View All Zones
             </Button>
           </div>
+          </div>
         </div>
         {/* Optionally, add a visual or illustration here for balance */}
-        <div className="hidden md:flex flex-col items-center justify-center flex-1">
-          <Droplet className="h-24 w-24 text-primary/30 mb-4" />
-          <span className="text-muted-foreground text-sm">Smart irrigation insights powered by AcreLink</span>
-        </div>
+        
       </div>
     </CardContent>
   </Card>
@@ -243,20 +288,21 @@ const Dashboard = () => {
 
 
 
+
         {/* Alert Section */}
-        {lowMoistureZones.length > 0 && (
+        {/* {lowMoistureZones.length > 0 && (
           <Alert className="mb-8 border-2 border-destructive/50 bg-destructive/10 shadow-industrial">
             <AlertCircle className="h-5 w-5 text-destructive" />
             <AlertDescription className="text-destructive font-semibold text-base">
               Low Moisture Alert: {lowMoistureZones.length} zone(s) need attention - {lowMoistureZones.map(z => z.zone).join(", ")}
             </AlertDescription>
           </Alert>
-        )}
+        )} */}
 
 
 
         {/* Irrigation Instructions Card */}
-        <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5">
+        <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5" >
           <CardHeader className="border-b-2 border-border/50 bg-card/50">
             <CardTitle className="text-3xl font-display font-bold text-foreground flex items-center">
               <Droplet className="h-8 w-8 mr-3 text-primary" />
@@ -277,45 +323,52 @@ const Dashboard = () => {
                     <div className="bg-card/80 border-2 border-border/50 rounded-lg p-6 shadow-industrial">
                       <h3 className="text-xl font-display font-bold text-foreground mb-4">Priority Zone</h3>
                       <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-3">
-                          <p className="text-base">
-                            <span className="text-muted-foreground">Location:</span>{" "}
-                            <span className="font-bold text-foreground text-lg">{dryestZone.zone}</span>
-                          </p>
-                          <p className="text-base">
-                            <span className="text-muted-foreground">Estimated Runtime:</span>{" "}
-                            <span className="font-bold text-primary text-lg">{duration} hours</span>
-                          </p>
-                          <p className="text-base">
-                            <span className="text-muted-foreground">Water Amount:</span>{" "}
-                            <span className="font-bold text-primary text-lg">{waterNeeded} acre-feet</span>
-                          </p>
-                        </div>
-                        <div className="space-y-3">
-                          <p className="text-base">
-                            <span className="text-muted-foreground">Time Since Last:</span>{" "}
-                            <span className="font-bold text-foreground text-lg">{dryestZone.lastIrrigation}</span>
-                          </p>
-                          <p className="text-base">
-                            <span className="text-muted-foreground">Forecasted Next:</span>{" "}
-                            <span className="font-bold text-foreground text-lg">{nextIrrigationDate.toLocaleDateString()} @ {nextIrrigationDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                          </p>
-                          <p className="text-base">
-                            <span className="text-muted-foreground">Water Applied (Week):</span>{" "}
-                            <span className="font-bold text-primary text-lg">{waterAppliedThisWeek} acre-feet</span>
-                          </p>
-                        </div>
+                      <div className="space-y-3">
+                        <p className="text-base">
+                        <span className="text-muted-foreground">Location:</span>{" "}
+                        <span className="font-bold text-foreground text-lg">{dryestZone.zone}</span>
+                       
+                       
+                        </p>
+                        <p className="text-base">
+                        <span className="text-muted-foreground">Estimated Runtime:</span>{" "}
+                        <span className="font-bold text-primary text-lg">{duration} hours</span>
+                        </p>
+                        <p className="text-base">
+                        <span className="text-muted-foreground">Water Amount:</span>{" "}
+                        <span className="font-bold text-primary text-lg">{waterNeeded} acre-feet</span>
+                        </p>
+                      </div>
+                      <div className="space-y-3">
+                        <p className="text-base">
+                        <span className="text-muted-foreground">Time Since Last:</span>{" "}
+                        <span className="font-bold text-foreground text-lg">{dryestZone.lastIrrigation}</span>
+                        </p>
+                        <p className="text-base">
+                        <span className="text-muted-foreground">Forecasted Next:</span>{" "}
+                        <span className="font-bold text-foreground text-lg">{nextIrrigationDate.toLocaleDateString()} @ {nextIrrigationDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </p>
+                        <p className="text-base">
+                        <span className="text-muted-foreground">Water Applied (Week):</span>{" "}
+                        <span className="font-bold text-primary text-lg">{waterAppliedThisWeek} acre-feet</span>
+                        </p>
+                      </div>
                       </div>
                       <p className="text-sm text-muted-foreground italic mt-4 pt-4 border-t border-border">
-                        Current moisture: {dryestZone.moisture}% • Target: 50%
+                      Current moisture: {dryestZone.moisture}% • Target: 50%
                       </p>
+                      <div className="mt-6 flex justify-end">
+                      {/* <Button size="lg" className="shadow-industrial hover-glow">
+                        View All Zones
+                      </Button> */}
+                      </div>
                     </div>
                     
                     <div className="bg-accent/10 border-2 border-accent/30 rounded-lg p-5 shadow-industrial">
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="text-lg font-display font-bold text-foreground mb-1">Year-to-Date Water Usage</h3>
-                          <p className="text-sm text-muted-foreground">Total water applied across all zones</p>
+                          <p className="text-sm text-muted-foreground">Total water applied across all zones </p>
                         </div>
                         <div className="text-right">
                           <div className="text-3xl font-display font-bold text-accent">
@@ -342,7 +395,7 @@ const Dashboard = () => {
             <Card className="shadow-industrial hover-lift border-2 border-border/50">
               <CardHeader className="pb-3">
           <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
-            <AlertCircle className="h-4 w-4 mr-2 text-destructive" />
+            <AlertCircle className="h-6 w-6 mr-2 text-destructive" />
             Zones at Risk Today
           </CardTitle>
               </CardHeader>
@@ -354,7 +407,7 @@ const Dashboard = () => {
             <Card className="shadow-industrial hover-lift border-2 border-border/50">
               <CardHeader className="pb-3">
           <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
-            <TrendingUp className="h-4 w-4 mr-2 text-primary" />
+            <TrendingUp className="h-6 w-6 mr-2 text-primary" />
             Acres On Track
           </CardTitle>
               </CardHeader>
@@ -366,7 +419,7 @@ const Dashboard = () => {
             <Card className="shadow-industrial hover-lift border-2 border-border/50">
               <CardHeader className="pb-3">
           <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
-            <Calendar className="h-4 w-4 mr-2 text-accent" />
+            <Calendar className="h-6 w-6 mr-2 text-accent" />
             Avg Days Until Next Irrigation
           </CardTitle>
               </CardHeader>
@@ -376,7 +429,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
-          <div className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md p-4">
+          {/* <div className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md p-4">
             <ul className="space-y-2">
               <li className="flex items-center text-yellow-800 text-sm font-medium">
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
@@ -387,7 +440,7 @@ const Dashboard = () => {
           East Field uneven wetting last irrigation
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex justify-between items-center mb-6">

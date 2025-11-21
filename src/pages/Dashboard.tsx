@@ -185,12 +185,16 @@ const Dashboard = () => {
           {/* Summary Sentence */}
           <div className="text-lg font-medium text-foreground mb-2">
             {lowMoistureZones.length > 0 ? (
-              <>
-                Irrigate {lowMoistureZones[0].zone} ("Dry" zone) in the next 12–24 hours.<br />
-                All other zones are on track.
-              </>
+              <div className="flex items-center gap-2 text-destructive text-s" >
+                <AlertCircle className="h-5 w-5 text-destructive" /> Irrigate {lowMoistureZones[0].zone} ("Dry" zone) in the next 12–24 hours. All other zones are on track.
+              </div>
             ) : (
-              <>All zones are on track. No immediate irrigation needed.</>
+              <div className="flex items-center gap-2 text-green-700 text-s">
+                <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                All zones are on track. No immediate irrigation needed.
+              </div>
             )}
           </div>
 
@@ -198,7 +202,7 @@ const Dashboard = () => {
           {lowMoistureZones.length > 0 && (
             <div>
               
-               <h3 className="text-xl flex items-center gap-2  font-display font-bold text-foreground mb-4"> <AlertCircle className="h-5 w-5 text-destructive" /> Low Zones</h3>
+               <h3 className="text-xl   font-display font-bold text-foreground mb-4">  Low Zones</h3>
               <ul className="space-y-2">
                 {lowMoistureZones.map((zone, idx) => {
                   // Extract days from lastIrrigation string (e.g., "36 hours ago" -> 1.5 days)
@@ -208,21 +212,21 @@ const Dashboard = () => {
 
 
                     
-                    <div
+                    <div  
                       key={zone.zone}
-                      className="border-2 border-yellow-400/70 bg-yellow-50/80 rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between shadow-industrial hover:shadow-lg transition-shadow"
+                      className="border-1 border-gray-400/70 bg-gray-300/20 rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between  hover:shadow-lg transition-shadow"
                     >
                       <div className="flex items-center gap-4 mb-3 md:mb-0">
-                        <span className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-yellow-100 border-2 border-yellow-300 shadow-inner">
-                          <AlertCircle className="h-6 w-6 text-yellow-600" />
+                        <span className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-100 border-2 border-gray-300 shadow-inner">
+                          <AlertCircle className="h-6 w-6 text-gray-600" />
                         </span>
                         <div>
-                          <div className="font-display font-bold text-lg text-yellow-900">{zone.zone}</div>
+                          <div className="font-display font-bold text-lg text-gray-900">{zone.zone}</div>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400">
+                            <span className="px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 text-xs font-semibold border border-gray-400">
                               {zone.status}
                             </span>
-                            <span className="text-xs text-yellow-700 font-semibold">
+                            <span className="text-xs text-gray-700 font-semibold">
                               {zone.moisture}% moisture
                             </span>
                           </div>
@@ -230,9 +234,9 @@ const Dashboard = () => {
                       </div>
                       <div className="flex flex-col md:flex-row md:items-center gap-6">
                         <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-yellow-700" />
+                          <Calendar className="h-4 w-4 text-gray-700" />
                           <span className="text-sm text-muted-foreground">Last:</span>
-                          <span className="font-bold text-yellow-900 text-base">{days} days ago</span>
+                          <span className="font-bold text-gray-900 text-base">{days} days ago</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Droplet className="h-4 w-4 text-primary" />
@@ -240,14 +244,14 @@ const Dashboard = () => {
                           <span className="font-bold text-primary text-base">2–3 days</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Battery className="h-4 w-4 text-yellow-700" />
+                          <Battery className="h-4 w-4 text-gray-700" />
                           <span className="text-sm text-muted-foreground">Battery:</span>
-                          <span className="font-bold text-yellow-900 text-base">{zone.batteryVoltage}V</span>
+                          <span className="font-bold text-gray-900 text-base">{zone.batteryVoltage}V</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Signal className="h-4 w-4 text-yellow-700" />
+                          <Signal className="h-4 w-4 text-gray-700" />
                           <span className="text-sm text-muted-foreground">Signal:</span>
-                          <span className="font-bold text-yellow-900 text-base">{zone.signalStrength}%</span>
+                          <span className="font-bold text-gray-900 text-base">{zone.signalStrength}%</span>
                         </div>
                       </div>
                     </div>
@@ -259,20 +263,20 @@ const Dashboard = () => {
           )}
 
           {/* Weather Note */}
-       <div className="flex items-center justify-between">
+       <div className="flex items-center justify-between mt-6 pt-4">
            <div className="bg-accent/10 border-1 rounded-lg p-3 shadow-industrial text-blue-700 bg-blue-100/60">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                           <CloudRain className="h-5 w-5 text-blue-500" />
-                          <h3 className="flex  text-lg font-display font-medium  mb-0"> Rain expected in 6 hours</h3>
-                                                  </div>
+                        <div className="flex items-center gap-2 h-8">
+                          <CloudRain className="h-5 w-5 text-blue-500" />
+                          <h3 className="flex text-lg font-display font-medium mb-0">Rain expected in 6 hours</h3>
+                        </div>
                         
                       </div>
                     </div>
 
           {/* View All Zones Button */}
-          <div className="mt-6">
-            <Button size="lg" className="w-full md:w-auto shadow-industrial hover-glow">
+          <div className="">
+            <Button size="lg" className="w-full md:w-auto shadow-industrial hover-glow h-14">
               View All Zones
             </Button>
           </div>
@@ -302,7 +306,7 @@ const Dashboard = () => {
 
 
         {/* Irrigation Instructions Card */}
-        <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5" >
+        {/* <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5" >
           <CardHeader className="border-b-2 border-border/50 bg-card/50">
             <CardTitle className="text-3xl font-display font-bold text-foreground flex items-center">
               <Droplet className="h-8 w-8 mr-3 text-primary" />
@@ -358,9 +362,7 @@ const Dashboard = () => {
                       Current moisture: {dryestZone.moisture}% • Target: 50%
                       </p>
                       <div className="mt-6 flex justify-end">
-                      {/* <Button size="lg" className="shadow-industrial hover-glow">
-                        View All Zones
-                      </Button> */}
+                      
                       </div>
                     </div>
                     
@@ -383,7 +385,7 @@ const Dashboard = () => {
               })()}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Key Performance Overview */}
         <div className="mb-8">
@@ -429,7 +431,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
-          {/* <div className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md p-4">
+          <div className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md p-4">
             <ul className="space-y-2">
               <li className="flex items-center text-yellow-800 text-sm font-medium">
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
@@ -440,7 +442,7 @@ const Dashboard = () => {
           East Field uneven wetting last irrigation
               </li>
             </ul>
-          </div> */}
+          </div>
         </div>
 
         <div className="flex justify-between items-center mb-6">
@@ -454,7 +456,7 @@ const Dashboard = () => {
         </div>
 
         {/* Zone Grid */}
-        <div className="mb-8">
+        <div className="mb-8" >
           <h3 className="text-2xl font-display font-bold text-foreground mb-4">Zone Status Grid</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {data.map((zone, index) => {

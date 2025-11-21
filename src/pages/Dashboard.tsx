@@ -169,7 +169,7 @@ const Dashboard = () => {
 
 
 
-        {/* Today’s Irrigation Call” should include: */}
+        {/* Today’s Irrigation Call”  */}
 
   <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5">
     <CardHeader className="border-b-2 border-border/50 bg-card/50">

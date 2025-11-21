@@ -210,31 +210,45 @@ const Dashboard = () => {
                     
                     <div
                       key={zone.zone}
-                      className="grid pb-2 md:grid-cols-2 md:items-center border-b border-border/40 last:border-b-0 space-y-3"
-                      style={{ borderBottomWidth: '1px' }}
+                      className="border-2 border-yellow-400/70 bg-yellow-50/80 rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between shadow-industrial hover:shadow-lg transition-shadow"
                     >
-                      <div className="text-base">
-                        <span className="text-muted-foreground">Location: </span>{" "}
-                        <span className="font-bold text-foreground text-lg">{zone.zone}</span>
-                      </div>
-
-                      <div className="text-base">
-                        <span className="text-muted-foreground " >Status:</span>
-                        <span className="px-2 py-0.5 font-semibold text-lg ">
-                          {zone.status}
+                      <div className="flex items-center gap-4 mb-3 md:mb-0">
+                        <span className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-yellow-100 border-2 border-yellow-300 shadow-inner">
+                          <AlertCircle className="h-6 w-6 text-yellow-600" />
                         </span>
+                        <div>
+                          <div className="font-display font-bold text-lg text-yellow-900">{zone.zone}</div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400">
+                              {zone.status}
+                            </span>
+                            <span className="text-xs text-yellow-700 font-semibold">
+                              {zone.moisture}% moisture
+                            </span>
+                          </div>
+                        </div>
                       </div>
-
-                      <div className="text-base">
-                        <span className="text-muted-foreground ">Last Irrigation: </span>
-                        <span className="font-bold text-primary text-lg">{days} days ago</span>
-                      </div>
-
-                      <div className="text-base">
-                        <span className="text-muted-foreground ">Suggested: </span>
-                        <span className="font-bold text-primary text-lg">
-                          2–3 days
-                        </span>
+                      <div className="flex flex-col md:flex-row md:items-center gap-6">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-yellow-700" />
+                          <span className="text-sm text-muted-foreground">Last:</span>
+                          <span className="font-bold text-yellow-900 text-base">{days} days ago</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Droplet className="h-4 w-4 text-primary" />
+                          <span className="text-sm text-muted-foreground">Suggested:</span>
+                          <span className="font-bold text-primary text-base">2–3 days</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Battery className="h-4 w-4 text-yellow-700" />
+                          <span className="text-sm text-muted-foreground">Battery:</span>
+                          <span className="font-bold text-yellow-900 text-base">{zone.batteryVoltage}V</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Signal className="h-4 w-4 text-yellow-700" />
+                          <span className="text-sm text-muted-foreground">Signal:</span>
+                          <span className="font-bold text-yellow-900 text-base">{zone.signalStrength}%</span>
+                        </div>
                       </div>
                     </div>
                     

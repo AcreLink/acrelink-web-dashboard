@@ -132,7 +132,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button 
+            {/* <Button 
               onClick={() => {
                 const csvData = [
                   ['Zone', 'Moisture %', 'Temperature °C', 'Status', 'Timestamp'],
@@ -151,8 +151,19 @@ const Dashboard = () => {
             >
               <Download className="h-4 w-4 mr-2" />
               Export Data
+            </Button> */}
+          
+          
+             <Button 
+              size="sm" 
+              className="border-2 hidden sm:flex"
+              onClick={() => window.location.href = "https://myacrelink.com/"}
+            >
+             
+            Back to home
             </Button>
           </div>
+          
         </div>
       </nav>
 

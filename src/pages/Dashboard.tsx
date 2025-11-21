@@ -214,7 +214,7 @@ const Dashboard = () => {
                     
                     <div  
                       key={zone.zone}
-                      className="border-1 border-gray-400/70 bg-gray-300/20 rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between  hover:shadow-lg transition-shadow"
+                      className="border border-[#efeeeb80] bg-[#efeeeb80] rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between hover:shadow-lg transition-shadow"
                     >
                       <div className="flex items-center gap-4 mb-3 md:mb-0">
                         <span className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-100 border-2 border-gray-300 shadow-inner">
@@ -693,7 +693,7 @@ const Dashboard = () => {
             </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-0">
               <div>
               <p className="text-lg font-semibold text-primary mb-1">Season Summary Available</p>
               <p className="text-sm text-muted-foreground">Download or generate reports for your records.</p>
@@ -710,7 +710,7 @@ const Dashboard = () => {
             </div>
             </CardContent>
           <CardContent className="pt-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-0">
               <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial">
                 <p className="text-sm text-muted-foreground mb-2">Total Acre-Feet Saved YTD</p>
                 <p className="text-3xl font-display font-bold text-primary">{waterSavedYTD}</p>
@@ -726,12 +726,12 @@ const Dashboard = () => {
                 <p className="text-3xl font-display font-bold text-foreground">14</p>
                 <p className="text-xs text-muted-foreground mt-1">months estimated</p>
               </div>
-              <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial flex items-center justify-center">
+              {/* <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial flex items-center justify-center">
                 <Button onClick={generateReport} size="lg" className="w-full shadow-industrial hover-glow h-14">
                   <Download className="h-5 w-5 mr-2" />
                   Download WOP Report
                 </Button>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>

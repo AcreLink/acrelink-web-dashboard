@@ -157,3 +157,18 @@ All colors MUST be HSL.
     box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
   }
 }
+
+
+
+@media(max-width:600px) {
+  
+.main-content-section {
+    padding: 16px !important;
+}
+
+.main-content-p0 {
+    padding: 0px !important;
+}
+
+}
+

@@ -184,15 +184,15 @@ const Dashboard = () => {
 
         {/* Today’s Irrigation Call”  */}
 
-  <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5 main-content-section">
-    <CardHeader className="border-b-2 border-border/50 bg-card/50">
+  <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5 main-content-p0">
+    <CardHeader className="border-b-2 border-border/50 bg-card/50 main-content-section">
       <CardTitle className="text-3xl font-display font-bold text-foreground flex items-center">
         
         <Droplet className="h-8 w-8 mr-3 text-primary" />
         Today’s Irrigation Call
       </CardTitle>
     </CardHeader>
-    <CardContent className="pt-6 main-content-p0 ">
+    <CardContent className="pt-6 main-content-section">
       <div className="main-content-section  flex flex-col md:flex-row md:items-start md:justify-between gap-8 bg-card/80 border-2 border-border/50 rounded-lg p-6 shadow-industrial">
         <div className="flex-1 space-y-4 min-w-[200px]">
           {/* Summary Sentence */}
@@ -257,7 +257,7 @@ const Dashboard = () => {
                     
                     <div  
                       key={zone.zone}
-                      className=" gap-5 border border-[#efeeeb80] bg-[#efeeeb80] rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between 
+                      className="main-content-section gap-5 border border-[#efeeeb80] bg-[#efeeeb80] rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between 
                       hover:shadow-lg transition-shadow"
                     >
                       <div className="flex items-center gap-4 mb-3 md:mb-0">
@@ -779,7 +779,7 @@ const Dashboard = () => {
               </div>
             </div>
             </CardContent>
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 main-content-section">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-0">
               <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial">
                 <p className="text-sm text-muted-foreground mb-2">Total Acre-Feet Saved YTD</p>
@@ -809,12 +809,12 @@ const Dashboard = () => {
         {/* System Health Summary */}
         <Card className="mb-8 shadow-industrial-lg border-2 border-border/50">
           <CardHeader>
-            <CardTitle className="text-3xl font-display font-bold flex items-center">
+            <CardTitle className=" main-content-sectiontext-3xl font-display font-bold flex items-center">
               <Activity className="h-8 w-8 mr-3 text-primary" />
               System Health Summary
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="main-content-section">
             <Table>
               <TableHeader>
                 <TableRow>

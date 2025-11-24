@@ -19,6 +19,17 @@ interface SensorZone {
 }
 
 const Dashboard = () => {
+    // Track which zones are enabled for the chart
+    const [enabledZones, setEnabledZones] = useState<{ [zone: string]: boolean }>({
+      "North Field": true,
+      "South Field": true,
+      "East Orchard": true,
+      "West Pasture": true,
+    });
+
+    const handleToggleZone = (zone: string) => {
+      setEnabledZones((prev) => ({ ...prev, [zone]: !prev[zone] }));
+    };
   // Standalone dashboard: no auth, no navigation
   const [data, setData] = useState<SensorZone[]>([
     { zone: "North Field", moisture: 28, temperature: 19, status: "Dry", lastIrrigation: "36 hours ago", batteryVoltage: 3.2, signalStrength: 85 },
@@ -694,38 +705,67 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent   >
             {chartView === "moisture" && (
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={get7DayChartDataWithZeroFuture()}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  {/* Optimal Zone band */}
-                  <ReferenceArea y1={80} y2={100} stroke={undefined} fill="#b6e7b0" fillOpacity={0.4} />
-                  <XAxis 
-                    dataKey="day"
-                    stroke="hsl(var(--muted-foreground))"
-                    style={{ fontSize: '12px', fontWeight: 500 }}
-                  />
-                  <YAxis 
-                    domain={[0, 120]}
-                    ticks={[0, 20, 40, 60, 80, 100, 120]}
-                    label={{ value: 'Moisture %', angle: -90, position: 'insideLeft', style: { fill: 'hsl(var(--muted-foreground))' } }}
-                    stroke="hsl(var(--muted-foreground))"
-                    style={{ fontSize: '12px', fontWeight: 500 }}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '2px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                      fontWeight: 600
-                    }}
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="North" stroke="hsl(var(--chart-1))" name="North Field" strokeWidth={3} />
-                  <Line type="monotone" dataKey="South" stroke="hsl(var(--chart-2))" name="South Field" strokeWidth={3} />
-                  <Line type="monotone" dataKey="East" stroke="hsl(var(--chart-3))" name="East Orchard" strokeWidth={3} />
-                  <Line type="monotone" dataKey="West" stroke="hsl(var(--chart-4))" name="West Pasture" strokeWidth={3} />
-                </LineChart>
-              </ResponsiveContainer>
+              <>
+                <ResponsiveContainer width="100%" height={350}>
+                  <LineChart data={get7DayChartDataWithZeroFuture()}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    {/* Optimal Zone band */}
+                    <ReferenceArea y1={80} y2={100} stroke={undefined} fill="#b6e7b0" fillOpacity={0.4} />
+                    <XAxis 
+                      dataKey="day"
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '12px', fontWeight: 500 }}
+                    />
+                    <YAxis 
+                      domain={[0, 120]}
+                      ticks={[0, 20, 40, 60, 80, 100, 120]}
+                      label={{ value: 'Moisture %', angle: -90, position: 'insideLeft', style: { fill: 'hsl(var(--muted-foreground))' } }}
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '12px', fontWeight: 500 }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '2px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                        fontWeight: 600
+                      }}
+                    />
+                    {enabledZones["North Field"] && (
+                      <Line type="monotone" dataKey="North" stroke="hsl(var(--chart-1))" name="North Field" strokeWidth={3} />
+                    )}
+                    {enabledZones["South Field"] && (
+                      <Line type="monotone" dataKey="South" stroke="hsl(var(--chart-2))" name="South Field" strokeWidth={3} />
+                    )}
+                    {enabledZones["East Orchard"] && (
+                      <Line type="monotone" dataKey="East" stroke="hsl(var(--chart-3))" name="East Orchard" strokeWidth={3} />
+                    )}
+                    {enabledZones["West Pasture"] && (
+                      <Line type="monotone" dataKey="West" stroke="#8B5CF6" name="West Pasture" strokeWidth={3} dot={{ r: 4 }} />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+                {/* Custom legend with checkboxes for toggling zones (only this row, no line legend above) */}
+                <div className="flex justify-center gap-6 mt-4 mb-2">
+                  {[
+                    { zone: "North Field", color: "hsl(var(--chart-1))" },
+                    { zone: "South Field", color: "#e2b93b" },
+                    { zone: "East Orchard", color: "#3bb8a6" },
+                    { zone: "West Pasture", color: "#8B5CF6" }
+                  ].map(({ zone, color }) => (
+                    <label key={zone} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={enabledZones[zone]}
+                        onChange={() => handleToggleZone(zone)}
+                        style={{ accentColor: color }}
+                        className="w-5 h-5 rounded focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                      />
+                      <span style={{ color, fontWeight: 600 }}>{zone}</span>
+                    </label>
+                  ))}
+                </div>
+              </>
             )}
             
             {chartView === "water" && (
@@ -773,40 +813,70 @@ const Dashboard = () => {
             )}
             
             {chartView === "forecast" && (
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={[
-                  { day: 'Today', North: avgMoisture + 2, South: avgMoisture - 3, East: avgMoisture + 8, West: avgMoisture + 5 },
-                  { day: 'Day +1', North: avgMoisture - 2, South: avgMoisture - 6, East: avgMoisture + 5, West: avgMoisture + 2 },
-                  { day: 'Day +2', North: avgMoisture - 5, South: avgMoisture - 9, East: avgMoisture + 2, West: avgMoisture - 1 },
-                  { day: 'Day +3', North: avgMoisture - 8, South: avgMoisture - 12, East: avgMoisture - 1, West: avgMoisture - 4 },
-                ]}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="day" 
-                    stroke="hsl(var(--muted-foreground))"
-                    style={{ fontSize: '12px', fontWeight: 500 }}
-                  />
-                  <YAxis 
-                    domain={[0, 100]}
-                    label={{ value: 'Forecasted Moisture %', angle: -90, position: 'insideLeft', style: { fill: 'hsl(var(--muted-foreground))' } }}
-                    stroke="hsl(var(--muted-foreground))"
-                    style={{ fontSize: '12px', fontWeight: 500 }}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '2px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                      fontWeight: 600
-                    }}
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="North" stroke="hsl(var(--chart-1))" name="North Field" strokeWidth={3} strokeDasharray="5 5" />
-                  <Line type="monotone" dataKey="South" stroke="hsl(var(--chart-2))" name="South Field" strokeWidth={3} strokeDasharray="5 5" />
-                  <Line type="monotone" dataKey="East" stroke="hsl(var(--chart-3))" name="East Orchard" strokeWidth={3} strokeDasharray="5 5" />
-                  <Line type="monotone" dataKey="West" stroke="hsl(var(--chart-4))" name="West Pasture" strokeWidth={3} strokeDasharray="5 5" />
-                </LineChart>
-              </ResponsiveContainer>
+              <>
+                <ResponsiveContainer width="100%" height={350}>
+                  <LineChart data={[
+                    { day: 'Today', North: avgMoisture + 2, South: avgMoisture - 3, East: avgMoisture + 8, West: avgMoisture + 5 },
+                    { day: 'Day +1', North: avgMoisture - 2, South: avgMoisture - 6, East: avgMoisture + 5, West: avgMoisture + 2 },
+                    { day: 'Day +2', North: avgMoisture - 5, South: avgMoisture - 9, East: avgMoisture + 2, West: avgMoisture - 1 },
+                    { day: 'Day +3', North: avgMoisture - 8, South: avgMoisture - 12, East: avgMoisture - 1, West: avgMoisture - 4 },
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis 
+                      dataKey="day" 
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '12px', fontWeight: 500 }}
+                    />
+                    <YAxis 
+                      domain={[0, 100]}
+                      label={{ value: 'Forecasted Moisture %', angle: -90, position: 'insideLeft', style: { fill: 'hsl(var(--muted-foreground))' } }}
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '12px', fontWeight: 500 }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '2px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                        fontWeight: 600
+                      }}
+                    />
+                    {/* Only render enabled zone lines */}
+                    {enabledZones["North Field"] && (
+                      <Line type="monotone" dataKey="North" stroke="hsl(var(--chart-1))" name="North Field" strokeWidth={3} strokeDasharray="5 5" />
+                    )}
+                    {enabledZones["South Field"] && (
+                      <Line type="monotone" dataKey="South" stroke="#e2b93b" name="South Field" strokeWidth={3} strokeDasharray="5 5" />
+                    )}
+                    {enabledZones["East Orchard"] && (
+                      <Line type="monotone" dataKey="East" stroke="#3bb8a6" name="East Orchard" strokeWidth={3} strokeDasharray="5 5" />
+                    )}
+                    {enabledZones["West Pasture"] && (
+                      <Line type="monotone" dataKey="West" stroke="#8B5CF6" name="West Pasture" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 4 }} />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+                {/* Custom legend with checkboxes for toggling zones (only this row, no line legend above) */}
+                <div className="flex justify-center gap-6 mt-4 mb-2">
+                  {[
+                    { zone: "North Field", color: "hsl(var(--chart-1))" },
+                    { zone: "South Field", color: "#e2b93b" },
+                    { zone: "East Orchard", color: "#3bb8a6" },
+                    { zone: "West Pasture", color: "#8B5CF6" }
+                  ].map(({ zone, color }) => (
+                    <label key={zone} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={enabledZones[zone]}
+                        onChange={() => handleToggleZone(zone)}
+                        style={{ accentColor: color }}
+                        className="w-5 h-5 rounded"
+                      />
+                      <span style={{ color, fontWeight: 600 }}>{zone}</span>
+                    </label>
+                  ))}
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

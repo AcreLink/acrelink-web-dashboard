@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar, Legend } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea, BarChart, Bar } from "recharts";
 import { AlertCircle, Droplet, Download, Battery, Signal, Calendar, RefreshCw, TrendingUp, DollarSign, Activity, CloudRain } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -26,7 +26,7 @@ const Dashboard = () => {
     { zone: "East Orchard", moisture: 65, temperature: 23, status: "Wet", lastIrrigation: "12 hours ago", batteryVoltage: 3.8, signalStrength: 78 },
     { zone: "West Pasture", moisture: 51, temperature: 20, status: "Optimal", lastIrrigation: "24 hours ago", batteryVoltage: 3.5, signalStrength: 88 },
   ]);
-  const [history, setHistory] = useState<Array<{ time: string; North: number; South: number; East: number; West: number }>>([]);
+  const [history, setHistory] = useState<Array<{ timestamp: string; North: number; South: number; East: number; West: number }>>([]);
   const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString());
   const [chartView, setChartView] = useState<"moisture" | "water" | "forecast">("moisture");
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -52,11 +52,14 @@ const Dashboard = () => {
       setData(newData);
       setLastUpdated(new Date().toLocaleTimeString());
 
-      const timestamp = new Date().toLocaleTimeString();
+      const now = new Date();
+      const timestamp = now.toLocaleString('en-US', {
+        weekday: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
+      }); // e.g., 'Mon, 24 14:00'
       setHistory((prev) => [
         ...prev.slice(-19), // keep last 20 records
         {
-          time: timestamp,
+          timestamp,
           North: newData[0].moisture,
           South: newData[1].moisture,
           East: newData[2].moisture,
@@ -119,6 +122,58 @@ const Dashboard = () => {
     a.href = url;
     a.download = `acrelink-validation-report-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
+  };
+
+  const getLast7DaysHistory = () => {
+    // Assuming each entry in history is for a unique timestamp (e.g., hourly or daily)
+    // If timestamps are not daily, adjust logic accordingly
+    if (!history || history.length <= 7) return history;
+    return history.slice(-7);
+  };
+
+  // For table and other data displays, use only actual history (last 3 days)
+  const getPast3DaysHistory = () => {
+    if (!history || history.length <= 3) return history;
+    return history.slice(-3);
+  };
+
+  // Utility to get formatted day labels
+  const getDayLabel = (date) => {
+    return date.toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' });
+  };
+
+  // Prepare 7-day data: 3 past, current, 3 future
+  const get7DayChartDataWithZeroFuture = () => {
+    const now = new Date();
+    // Get last 3 days from history
+    const pastDays = [];
+    for (let i = 3; i > 0; i--) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      pastDays.push({
+        day: getDayLabel(d),
+        ...((history[history.length - i] || history[history.length - 1]) ?? {})
+      });
+    }
+    // Current day
+    pastDays.push({
+      day: getDayLabel(now),
+      ...((history[history.length - 1]) ?? {})
+    });
+    // Future days: show 0 for all moisture values
+    const futureDays = [];
+    for (let i = 1; i <= 3; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() + i);
+      futureDays.push({
+        day: getDayLabel(d),
+        North: 0,
+        South: 0,
+        East: 0,
+        West: 0
+      });
+    }
+    return [...pastDays, ...futureDays];
   };
 
   return (
@@ -640,16 +695,18 @@ const Dashboard = () => {
           <CardContent   >
             {chartView === "moisture" && (
               <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={history}>
+                <LineChart data={get7DayChartDataWithZeroFuture()}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  {/* Optimal Zone band */}
+                  <ReferenceArea y1={80} y2={100} stroke={undefined} fill="#b6e7b0" fillOpacity={0.4} />
                   <XAxis 
-                    dataKey="time" 
-                    interval={3}
+                    dataKey="day"
                     stroke="hsl(var(--muted-foreground))"
                     style={{ fontSize: '12px', fontWeight: 500 }}
                   />
                   <YAxis 
-                    domain={[0, 100]}
+                    domain={[0, 120]}
+                    ticks={[0, 20, 40, 60, 80, 100, 120]}
                     label={{ value: 'Moisture %', angle: -90, position: 'insideLeft', style: { fill: 'hsl(var(--muted-foreground))' } }}
                     stroke="hsl(var(--muted-foreground))"
                     style={{ fontSize: '12px', fontWeight: 500 }}

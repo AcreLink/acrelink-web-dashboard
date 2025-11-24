@@ -152,11 +152,12 @@ const Dashboard = () => {
               <Download className="h-4 w-4 mr-2" />
               Export Data
             </Button> */}
-          
+
+                
           
              <Button 
               size="sm" 
-              className="border-2 hidden sm:flex"
+              className="border-2 hidden sm:flex bg-background text-[#3a3835] bg-background hover:bg-accent hover:text-accent-foreground"
               onClick={() => window.location.href = "https://myacrelink.com/"}
             >
              
@@ -194,26 +195,56 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 bg-card/80 border-2 border-border/50 rounded-lg p-6 shadow-industrial">
         <div className="flex-1 space-y-4 min-w-[260px]">
           {/* Summary Sentence */}
-          <div className="text-lg font-medium text-foreground mb-2">
-            {lowMoistureZones.length > 0 ? (
-              <div className="flex items-center gap-2 text-destructive text-s" >
-                <AlertCircle className="h-5 w-5 text-destructive" /> Irrigate {lowMoistureZones[0].zone} ("Dry" zone) in the next 12–24 hours. All other zones are on track.
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-green-700 text-s">
-                <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                All zones are on track. No immediate irrigation needed.
-              </div>
-            )}
-          </div>
+            <div
+              className={`text-s font-medium mb-2 ${
+                lowMoistureZones.length > 0
+                  ? "border-2 border-destructive/60 bg-destructive/10 rounded-lg p-2 text-destructive"
+                  : "border-2 border-green-500/60 bg-green-100/40 rounded-lg p-2 text-green-700"
+              }`}
+            >
+              {lowMoistureZones.length > 0 ? (
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-destructive" />
+                  <span>
+                    <span className="font-bold">
+                      {lowMoistureZones.length === 1
+                        ? lowMoistureZones[0].zone
+                        : `${lowMoistureZones.length} zones`}
+                    </span>{" "}
+                    need irrigation soon.
+                    <span className="ml-2">
+                      Irrigate{" "}
+                      {lowMoistureZones.length === 1
+                        ? lowMoistureZones[0].zone
+                        : "priority zones"}{" "}
+                      within <span className="font-bold">12–24 hours</span>.
+                    </span>
+                    <span className="ml-2 text-muted-foreground">
+                      Other zones are on track.
+                    </span>
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <svg
+                    className="h-5 w-5 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>All zones are on track. No immediate irrigation needed.</span>
+                </div>
+              )}
+            </div>
 
           {/* Low Zones List */}
           {lowMoistureZones.length > 0 && (
             <div>
               
-               <h3 className="text-xl   font-display font-bold text-foreground mb-4">  Low Zones</h3>
+               <h3 className="text-xl   font-display font-bold text-foreground mb-4">  Priority Zones</h3>
               <ul className="space-y-2">
                 {lowMoistureZones.map((zone, idx) => {
                   // Extract days from lastIrrigation string (e.g., "36 hours ago" -> 1.5 days)
@@ -442,16 +473,20 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
-          <div className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md p-4">
+          <div className=" p-4">
             <ul className="space-y-2">
-              <li className="flex items-center text-yellow-800 text-sm font-medium">
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex items-center text-yellow-800 text-sm font-medium">
+                
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
           North Field drying faster than normal
               </li>
-              <li className="flex items-center text-yellow-800 text-sm font-medium">
+              </Alert>
+
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex items-center text-yellow-800 text-sm font-medium">
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
           East Field uneven wetting last irrigation
               </li>
+              </Alert>
             </ul>
           </div>
         </div>
@@ -481,73 +516,73 @@ const Dashboard = () => {
               return (
                 <Card 
                   key={index} 
-                  className={`shadow-industrial border-2 hover-lift group relative overflow-hidden ${colors.bg} ${colors.border}`}
+                  className={`shadow-industrial border-2 hover-lift group relative overflow-hidden border-[#DEDBD4]`}
                 >
                   <div className={`absolute top-0 left-0 w-full h-1.5 ${colors.bar}`} />
                   <CardContent className="p-5 pt-7">
-                    <div className="flex items-start justify-between mb-4">
-                      <h2 className="text-xl font-display font-bold text-foreground">{zone.zone}</h2>
-                      {zone.status === "Dry" && (
-                        <AlertCircle className="h-5 w-5 text-destructive" />
-                      )}
+                  <div className="flex items-start justify-between mb-4">
+                    <h2 className="text-xl font-display font-bold text-foreground">{zone.zone}</h2>
+                    {zone.status === "Dry" && (
+                    <AlertCircle className="h-5 w-5 text-destructive" />
+                    )}
+                  </div>
+                  <div className="space-y-2.5" >
+                    <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground flex items-center">
+                      🌡 Temperature
+                    </span>
+                    <span className="font-bold text-foreground">{zone.temperature}°C</span>
                     </div>
-                    <div className="space-y-2.5" >
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground flex items-center">
-                          🌡 Temperature
-                        </span>
-                        <span className="font-bold text-foreground">{zone.temperature}°C</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground flex items-center">
-                          💧 Moisture
-                        </span>
-                        <span className="font-bold text-foreground">{zone.moisture}%</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground flex items-center">
-                          <Calendar className="h-3.5 w-3.5 mr-1.5" /> Last Irrigation
-                        </span>
-                        <span className="font-semibold text-foreground text-sm">{zone.lastIrrigation}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground flex items-center">
-                          <Battery className="h-3.5 w-3.5 mr-1.5" /> Battery
-                        </span>
-                        <span className="font-semibold text-foreground text-sm">{zone.batteryVoltage}V</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground flex items-center">
-                          <Signal className="h-3.5 w-3.5 mr-1.5" /> Signal
-                        </span>
-                        <span className="font-semibold text-foreground text-sm">{zone.signalStrength}%</span>
-                      </div>
-                      {/* Trend Tag */}
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-sm text-muted-foreground flex items-center">
-                          Trend
-                        </span>
-                        <span className={
-                          (() => {
-                            // Example logic: Drying fast if moisture < 35 and status is Dry, Stable if Wet, Normal otherwise
-                            if (zone.status === "Dry" && zone.moisture < 35) return "px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400";
-                            if (zone.status === "Wet") return "px-2 py-0.5 rounded-full bg-blue-200 text-blue-800 text-xs font-semibold border border-blue-400";
-                            return "px-2 py-0.5 rounded-full bg-green-200 text-green-800 text-xs font-semibold border border-green-400";
-                          })()
-                        }>
-                          {(() => {
-                            if (zone.status === "Dry" && zone.moisture < 35) return "Drying fast";
-                            if (zone.status === "Wet") return "Stable";
-                            return "Normal";
-                          })()}
-                        </span>
-                      </div>
-                      <div className="pt-3 mt-3 border-t-2 border-border">
-                        <p className={`font-display font-bold text-sm flex items-center justify-center ${colors.text}`}>
-                          Status: {zone.status}
-                        </p>
-                      </div>
+                    <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground flex items-center">
+                      💧 Moisture
+                    </span>
+                    <span className="font-bold text-foreground">{zone.moisture}%</span>
                     </div>
+                    <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground flex items-center">
+                      <Calendar className="h-3.5 w-3.5 mr-1.5" /> Last Irrigation
+                    </span>
+                    <span className="font-semibold text-foreground text-sm">{zone.lastIrrigation}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground flex items-center">
+                      <Battery className="h-3.5 w-3.5 mr-1.5" /> Battery
+                    </span>
+                    <span className="font-semibold text-foreground text-sm">{zone.batteryVoltage}V</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground flex items-center">
+                      <Signal className="h-3.5 w-3.5 mr-1.5" /> Signal
+                    </span>
+                    <span className="font-semibold text-foreground text-sm">{zone.signalStrength}%</span>
+                    </div>
+                    {/* Trend Tag */}
+                    <div className="flex justify-between items-center mt-2">
+                    <span className="text-sm text-muted-foreground flex items-center">
+                      Trend
+                    </span>
+                    <span className={
+                      (() => {
+                      // Example logic: Drying fast if moisture < 35 and status is Dry, Stable if Wet, Normal otherwise
+                      if (zone.status === "Dry" && zone.moisture < 35) return "px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400";
+                      if (zone.status === "Wet") return "px-2 py-0.5 rounded-full bg-blue-200 text-blue-800 text-xs font-semibold border border-blue-400";
+                      return "px-2 py-0.5 rounded-full bg-green-200 text-green-800 text-xs font-semibold border border-green-400";
+                      })()
+                    }>
+                      {(() => {
+                      if (zone.status === "Dry" && zone.moisture < 35) return "Drying fast";
+                      if (zone.status === "Wet") return "Stable";
+                      return "Normal";
+                      })()}
+                    </span>
+                    </div>
+                    <div className="pt-3 mt-3 border-t-2 border-border">
+                    <p className={`font-display font-bold text-sm flex items-center justify-center ${colors.text}`}>
+                      Status: {zone.status}
+                    </p>
+                    </div>
+                  </div>
                   </CardContent>
                 </Card>
               );

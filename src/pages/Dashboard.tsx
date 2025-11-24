@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import acreLinkLogo from "@/assets/acrelink-logo.png";
 
+
 interface SensorZone {
   zone: string;
   moisture: number;
@@ -171,7 +172,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8 main-content-section">
         <div className="mb-8">
-          <h2 className="text-4xl font-display font-bold text-foreground mb-3">AcreLink Validation Dashboard</h2>
+          <h2 className="text-4xl s:text-3xl font-display font-bold text-foreground mb-3">AcreLink Validation Dashboard</h2>
           <p className="text-lg text-muted-foreground">
             Real-time irrigation insights, savings data, and system performance for your connected fields.
           </p>
@@ -277,24 +278,35 @@ const Dashboard = () => {
                       </div>
 
                       <div className="flex flex-wrap flex-col md:flex-row md:items-center gap-6">
-                        <div className="flex items-center gap-2">
+                        <div className="flex justify-between items-center gap-2">
+                          <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-gray-700" />
                           <span className="text-sm text-muted-foreground">Last:</span>
+                          </div>
                           <span className="font-bold text-gray-900 text-base">{days} days ago</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        
+                        <div className="flex justify-between items-center gap-2">
+                          <div className="flex items-center gap-2">
                           <Droplet className="h-4 w-4 text-primary" />
                           <span className="text-sm text-muted-foreground">Suggested:</span>
+                          </div>
                           <span className="font-bold text-primary text-base">2–3 days</span>
                         </div>
-                        <div className="flex items-center gap-2">
+
+                        <div className="flex justify-between items-center gap-2">
+                          <div className="flex items-center gap-2">
                           <Battery className="h-4 w-4 text-gray-700" />
                           <span className="text-sm text-muted-foreground">Battery:</span>
+                          </div>
                           <span className="font-bold text-gray-900 text-base">{zone.batteryVoltage}V</span>
                         </div>
-                        <div className="flex items-center gap-2">
+
+                        <div className="flex justify-between items-center gap-2">
+                          <div className="flex items-center gap-2">
                           <Signal className="h-4 w-4 text-gray-700" />
                           <span className="text-sm text-muted-foreground">Signal:</span>
+                          </div>
                           <span className="font-bold text-gray-900 text-base">{zone.signalStrength}%</span>
                         </div>
                       </div>
@@ -475,7 +487,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
-          <div className=" p-4">
+          <div className=" p-4 main-content-p0">
             <ul className="space-y-2">
               <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap items-center text-yellow-800 text-s font-medium">
                 
@@ -814,18 +826,18 @@ const Dashboard = () => {
               <TableBody>
                 <TableRow>
                   <TableCell className="font-semibold">Sensors Online</TableCell>
-                  <TableCell className="text-right font-bold text-lg">
+                  <TableCell className="text-right font-bold text-s">
                     {activeSensors} / {activeSensors + offlineSensors}
                   </TableCell>
                   <TableCell className="text-right">
-                    <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold">
+                    <span className="px-3 whitespace-nowrap py-1 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold">
                       Good
                     </span>
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Average Battery Level</TableCell>
-                  <TableCell className="text-right font-bold text-lg">{avgBatteryVoltage}V</TableCell>
+                  <TableCell className="text-right font-bold text-s whitespace-nowrap">{avgBatteryVoltage}V</TableCell>
                   <TableCell className="text-right">
                     <span className={
                       Number(avgBatteryVoltage) < 3.3
@@ -838,12 +850,12 @@ const Dashboard = () => {
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Last Sync Time</TableCell>
-                  <TableCell className="text-right font-bold text-lg">{lastUpdated}</TableCell>
+                  <TableCell className="text-right font-bold text-s whitespace-nowrap ">{lastUpdated}</TableCell>
                   <TableCell className="text-right">
                     <span className={
                       new Date().getTime() - new Date(`1970-01-01T${lastUpdated}Z`).getTime() > 1000 * 60 * 10
-                        ? "px-3 py-1 rounded-full bg-red-500/20 text-red-600 text-sm font-semibold"
-                        : "px-3 py-1 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold"
+                        ? "px-3 py-1 rounded-full bg-red-500/20 text-red-600 text-sm font-semibold whitespace-nowrap"
+                        : "px-3 py-1 rounded-full bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-semibold whitespace-nowrap"
                     }>
                       {new Date().getTime() - new Date(`1970-01-01T${lastUpdated}Z`).getTime() > 1000 * 60 * 10
                         ? "Action Needed"

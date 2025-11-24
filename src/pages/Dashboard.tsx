@@ -169,7 +169,7 @@ const Dashboard = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 main-content-section">
         <div className="mb-8">
           <h2 className="text-4xl font-display font-bold text-foreground mb-3">AcreLink Validation Dashboard</h2>
           <p className="text-lg text-muted-foreground">
@@ -183,7 +183,7 @@ const Dashboard = () => {
 
         {/* Today’s Irrigation Call”  */}
 
-  <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5">
+  <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5 main-content-section">
     <CardHeader className="border-b-2 border-border/50 bg-card/50">
       <CardTitle className="text-3xl font-display font-bold text-foreground flex items-center">
         
@@ -191,9 +191,9 @@ const Dashboard = () => {
         Today’s Irrigation Call
       </CardTitle>
     </CardHeader>
-    <CardContent className="pt-6  ">
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 bg-card/80 border-2 border-border/50 rounded-lg p-6 shadow-industrial">
-        <div className="flex-1 space-y-4 min-w-[260px]">
+    <CardContent className="pt-6 main-content-p0 ">
+      <div className="main-content-section  flex flex-col md:flex-row md:items-start md:justify-between gap-8 bg-card/80 border-2 border-border/50 rounded-lg p-6 shadow-industrial">
+        <div className="flex-1 space-y-4 min-w-[200px]">
           {/* Summary Sentence */}
             <div
               className={`text-s font-medium mb-2 ${
@@ -203,7 +203,7 @@ const Dashboard = () => {
               }`}
             >
               {lowMoistureZones.length > 0 ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <AlertCircle className="h-5 w-5 text-destructive" />
                   <span>
                     <span className="font-bold">
@@ -219,13 +219,13 @@ const Dashboard = () => {
                         : "priority zones"}{" "}
                       within <span className="font-bold">12–24 hours</span>.
                     </span>
-                    <span className="ml-2 text-muted-foreground">
+                    <span className="ml-2  ">
                       Other zones are on track.
                     </span>
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <svg
                     className="h-5 w-5 text-green-500"
                     fill="none"
@@ -256,7 +256,8 @@ const Dashboard = () => {
                     
                     <div  
                       key={zone.zone}
-                      className="border border-[#efeeeb80] bg-[#efeeeb80] rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between hover:shadow-lg transition-shadow"
+                      className=" gap-5 border border-[#efeeeb80] bg-[#efeeeb80] rounded-xl p-5 mb-4 flex flex-col md:flex-row md:items-center md:justify-between 
+                      hover:shadow-lg transition-shadow"
                     >
                       <div className="flex items-center gap-4 mb-3 md:mb-0">
                         <span className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-100 border-2 border-gray-300 shadow-inner">
@@ -274,7 +275,8 @@ const Dashboard = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col md:flex-row md:items-center gap-6">
+
+                      <div className="flex flex-wrap flex-col md:flex-row md:items-center gap-6">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-gray-700" />
                           <span className="text-sm text-muted-foreground">Last:</span>
@@ -305,7 +307,7 @@ const Dashboard = () => {
           )}
 
           {/* Weather Note */}
-       <div className="flex items-center justify-between mt-6 pt-4">
+       <div className="flex flex-wrap items-center justify-between mt-6 pt-4 gap-6 ">
            <div className="bg-accent/10 border-1 rounded-lg p-3 shadow-industrial text-blue-700 bg-blue-100/60">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 h-8">
@@ -475,14 +477,14 @@ const Dashboard = () => {
           </div>
           <div className=" p-4">
             <ul className="space-y-2">
-              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex items-center text-yellow-800 text-sm font-medium">
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap items-center text-yellow-800 text-s font-medium">
                 
-          <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
+          <AlertCircle className="h-4 w-4 mr-2 text-yellow-600"  />
           North Field drying faster than normal
               </li>
               </Alert>
 
-              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex items-center text-yellow-800 text-sm font-medium">
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap items-center text-yellow-800 text-s font-medium">
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
           East Field uneven wetting last irrigation
               </li>
@@ -491,7 +493,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-wrap justify-between items-center mb-6 gap-6">
           <p className="text-sm text-muted-foreground font-medium">
             Last updated: <span className="font-bold text-foreground">{lastUpdated}</span>
           </p>
@@ -594,8 +596,8 @@ const Dashboard = () => {
         <Card className="mb-8 shadow-industrial-lg border-2 border-border/50">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle className="text-3xl font-display font-bold">“Moisture Trends by Zone</CardTitle>
-              <div className="flex gap-2">
+              <CardTitle className="text-3xl font-display font-bold">Moisture Trends by Zone</CardTitle>
+              <div className="flex gap-2 flex-wrap">
                 <Button 
                   onClick={() => setChartView("moisture")}
                   variant={chartView === "moisture" ? "default" : "outline"}
@@ -623,7 +625,7 @@ const Dashboard = () => {
               </div>
             </div>
           </CardHeader>
-          <CardContent  >
+          <CardContent   >
             {chartView === "moisture" && (
               <ResponsiveContainer width="100%" height={350}>
                 <LineChart data={history}>
@@ -658,37 +660,47 @@ const Dashboard = () => {
             )}
             
             {chartView === "water" && (
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={[
-                  { week: 'Week 1', applied: 8.2, et0: 9.1 },
-                  { week: 'Week 2', applied: 11.5, et0: 10.8 },
-                  { week: 'Week 3', applied: 9.8, et0: 11.2 },
-                  { week: 'Week 4', applied: 12.4, et0: 12.6 },
-                ]}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="week" 
-                    stroke="hsl(var(--muted-foreground))"
-                    style={{ fontSize: '12px', fontWeight: 500 }}
-                  />
-                  <YAxis 
-                    label={{ value: 'acre-feet', angle: -90, position: 'insideLeft', style: { fill: 'hsl(var(--muted-foreground))' } }}
-                    stroke="hsl(var(--muted-foreground))"
-                    style={{ fontSize: '12px', fontWeight: 500 }}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '2px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                      fontWeight: 600
-                    }}
-                  />
-                  <Legend />
-                  <Bar dataKey="applied" fill="hsl(var(--primary))" name="Water Applied (acre-feet)" />
-                  <Bar dataKey="et0" fill="hsl(var(--chart-2))" name="ET₀ Reference (acre-feet)" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div style={{ width: "100%", minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height={350}>
+                  <BarChart
+                    data={[
+                      { week: 'Week 1', applied: 8.2, et0: 9.1 },
+                      { week: 'Week 2', applied: 11.5, et0: 10.8 },
+                      { week: 'Week 3', applied: 9.8, et0: 11.2 },
+                      { week: 'Week 4', applied: 12.4, et0: 12.6 },
+                    ]}
+                    margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis
+                      dataKey="week"
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '12px', fontWeight: 500 }}
+                    />
+                    <YAxis
+                      label={{
+                        value: 'acre-feet',
+                        angle: -90,
+                        position: 'insideLeft',
+                        style: { fill: 'hsl(var(--muted-foreground))' }
+                      }}
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '12px', fontWeight: 500 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '2px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                        fontWeight: 600
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="applied" fill="hsl(var(--primary))" name="Water Applied (acre-feet)" />
+                    <Bar dataKey="et0" fill="hsl(var(--chart-2))" name="ET₀ Reference (acre-feet)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             )}
             
             {chartView === "forecast" && (
@@ -738,13 +750,13 @@ const Dashboard = () => {
               Reports & Summaries
             </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-0">
+            <CardContent className="pt-6 main-content-section">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-0 main-content-p0">
               <div>
               <p className="text-lg font-semibold text-primary mb-1">Season Summary Available</p>
               <p className="text-sm text-muted-foreground">Download or generate reports for your records.</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
               <Button size="lg" className="shadow-industrial hover-glow" onClick={generateReport}>
                 <Download className="h-5 w-5 mr-2" />
                 Download Season Summary

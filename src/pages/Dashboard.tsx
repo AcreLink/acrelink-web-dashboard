@@ -238,9 +238,9 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8 main-content-section">
         <div className="mb-8">
-          <h2 className="text-4xl s:text-3xl font-display font-bold text-foreground mb-3">AcreLink Validation Dashboard</h2>
+          <h2 className="text-[clamp(23px,2vw,36px)] font-display font-bold text-foreground mb-[clamp(10px,1.5vw,15px)]">AcreLink Pilot Dashboard</h2>
           <p className="text-lg text-muted-foreground">
-            Real-time irrigation insights, savings data, and system performance for your connected fields.
+            Drop “savings data”
           </p>
         </div>
 
@@ -252,17 +252,51 @@ const Dashboard = () => {
 
   <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5 main-content-p0">
     <CardHeader className="border-b-2 border-border/50 bg-card/50 main-content-section">
-      <CardTitle className="text-3xl font-display font-bold text-foreground flex items-center">
+      <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-bold text-foreground flex items-center">
         
-        <Droplet className="h-8 w-8 mr-3 text-primary" />
-        Today’s Irrigation Call
+        <Droplet className="h-8 w-8 mr-3  text-primary" />
+        Field Status
       </CardTitle>
     </CardHeader>
     <CardContent className="pt-6 main-content-section">
       <div className="main-content-section  flex flex-col md:flex-row md:items-start md:justify-between gap-8 bg-card/80 border-2 border-border/50 rounded-lg p-6 shadow-industrial">
         <div className="flex-1 space-y-4 min-w-[200px]">
           {/* Summary Sentence */}
-            <div
+          <div className="mb-4">
+            {lowMoistureZones.length > 0 ? (
+              <span className="font-medium text-destructive">
+                {lowMoistureZones.map(z => z.zone).join(", ")} moisture is below optimal range. All other zones are on track.
+              </span>
+            ) : (
+              <span className="font-medium text-green-700">
+                All zones are on track.
+              </span>
+            )}
+          </div>
+
+          {/* Priority Zones */}
+          {lowMoistureZones.length > 0 && (
+            <div className="mb-4">
+              <h3 className="text-lg font-bold mb-2">Priority Zones</h3>
+              <ul className="space-y-2">
+                {lowMoistureZones.map(zone => (
+                  <li key={zone.zone} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-[#efeeeb80]-300 bg-[#efeeeb80] rounded-lg p-4">
+                    <div className="flex items-center gap-3 white-space-nowrap">
+                      <span className="px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400">Watch</span>
+                      <span className="font-bold text-gray-900 white-space-nowrap">{zone.zone}</span>
+                      <span className="text-xs text-gray-700 font-semibold white-space-nowrap">{zone.moisture}% moisture</span>
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-3 items-center">
+                      <span className="text-xs text-yellow-800 bg-yellow-100 px-2 py-1 rounded whitespace-nowrap">Zone drying faster than normal</span>
+                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded whitespace-nowrap">Action: Address at next irrigation cycle</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Summary Sentence */}
+            {/* <div
               className={`text-s font-medium mb-2 ${
                 lowMoistureZones.length > 0
                   ? "border-2 border-destructive/60 bg-destructive/10 rounded-lg p-2 text-destructive"
@@ -305,16 +339,16 @@ const Dashboard = () => {
                   <span>All zones are on track. No immediate irrigation needed.</span>
                 </div>
               )}
-            </div>
+            </div> */}
 
           {/* Low Zones List */}
-          {lowMoistureZones.length > 0 && (
+          {/* {lowMoistureZones.length > 0 && (
             <div>
               
                <h3 className="text-xl   font-display font-bold text-foreground mb-4">  Priority Zones</h3>
               <ul className="space-y-2">
                 {lowMoistureZones.map((zone, idx) => {
-                  // Extract days from lastIrrigation string (e.g., "36 hours ago" -> 1.5 days)
+                  
                   const match = zone.lastIrrigation.match(/(\d+)(?:\s*hours?)/i);
                   const days = match ? (parseInt(match[1], 10) / 24).toFixed(1) : zone.lastIrrigation;
                   return (
@@ -382,13 +416,13 @@ const Dashboard = () => {
                 })}
               </ul>
             </div>
-          )}
+          )} */}
 
           {/* Weather Note */}
        <div className="flex flex-wrap items-center justify-between mt-6 pt-4 gap-6 ">
-           <div className="bg-accent/10 border-1 rounded-lg p-3 shadow-industrial text-blue-700 bg-blue-100/60">
+           <div className="bg-accent/10 border-1 rounded-lg p-3 shadow-industrial text-blue-700 bg-blue-100/60 md:w-auto w-full ">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 h-8">
+                        <div className="flex sm:w-full items-center gap-2 h-8">
                           <CloudRain className="h-5 w-5 text-blue-500" />
                           <h3 className="flex text-lg font-display font-medium mb-0">Rain expected in 6 hours</h3>
                         </div>
@@ -397,8 +431,8 @@ const Dashboard = () => {
                     </div>
 
           {/* View All Zones Button */}
-          <div className="">
-            <Button size="lg" className="w-full md:w-auto shadow-industrial hover-glow h-14">
+          <div className="md:w-auto w-full">
+            <Button size="lg" className="w-full md:w-auto sm:w-full shadow-industrial hover-glow h-14">
               View All Zones
             </Button>
           </div>
@@ -511,16 +545,16 @@ const Dashboard = () => {
 
         {/* Key Performance Overview */}
         <div className="mb-8">
-          <h3 className="text-2xl font-display font-bold text-foreground mb-4 flex items-center">
+          <h3 className="text-[clamp(20px,2vw,30px)] font-display font-bold text-foreground mb-4 flex items-center">
             <AlertCircle className="h-7 w-7 mr-3 text-primary" />
             Stress &amp; Uniformity
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <Card className="shadow-industrial hover-lift border-2 border-border/50">
               <CardHeader className="pb-3">
           <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
             <AlertCircle className="h-6 w-6 mr-2 text-destructive" />
-            Zones at Risk Today
+            Number of zones at risk today
           </CardTitle>
               </CardHeader>
               <CardContent>
@@ -532,15 +566,16 @@ const Dashboard = () => {
               <CardHeader className="pb-3">
           <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
             <TrendingUp className="h-6 w-6 mr-2 text-primary" />
-            Acres On Track
+            Percentage of acres currently on track
           </CardTitle>
               </CardHeader>
               <CardContent>
           <div className="text-3xl font-display font-bold text-primary">85%</div>
-          <p className="text-xs text-muted-foreground mt-1">of acres currently on track</p>
+          {/* <p className="text-xs text-muted-foreground mt-1">of acres currently on track</p> */}
               </CardContent>
             </Card>
-            <Card className="shadow-industrial hover-lift border-2 border-border/50">
+
+            {/* <Card className="shadow-industrial hover-lift border-2 border-border/50">
               <CardHeader className="pb-3">
           <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
             <Calendar className="h-6 w-6 mr-2 text-accent" />
@@ -551,7 +586,7 @@ const Dashboard = () => {
           <div className="text-3xl font-display font-bold text-accent">7</div>
           <p className="text-xs text-muted-foreground mt-1">days (average)</p>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
           <div className=" p-4 main-content-p0">
             <ul className="space-y-2">
@@ -583,7 +618,7 @@ const Dashboard = () => {
 
         {/* Zone Grid */}
         <div className="mb-8" >
-          <h3 className="text-2xl font-display font-bold text-foreground mb-4">Zone Status Grid</h3>
+          <h3 className="text-[clamp(20px,2vw,30px)] font-display font-bold text-foreground mb-4">Zone Status Grid Upgrade</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {data.map((zone, index) => {
               const statusColors = {
@@ -594,7 +629,12 @@ const Dashboard = () => {
               const colors = statusColors[zone.status as keyof typeof statusColors] || statusColors.Optimal;
               
               return (
-                <Card 
+
+
+
+
+                
+                <Card  
                   key={index} 
                   className={`shadow-industrial border-2 hover-lift group relative overflow-hidden border-[#DEDBD4]`}
                 >
@@ -607,39 +647,60 @@ const Dashboard = () => {
                     )}
                   </div>
                   <div className="space-y-2.5" >
-                    <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground flex items-center">
-                      🌡 Temperature
-                    </span>
-                    <span className="font-bold text-foreground">{zone.temperature}°C</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground flex items-center">
-                      💧 Moisture
-                    </span>
-                    <span className="font-bold text-foreground">{zone.moisture}%</span>
-                    </div>
-                    <div className="flex justify-between items-center">
+                        {/* Temperature in Fahrenheit */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground flex items-center">
+                          🌡 Temperature
+                        </span>
+                        <span className="font-bold text-foreground">
+                          {Math.round(zone.temperature * 9 / 5 + 32)}°F
+                        </span>
+                      </div>
+
+                      {/* Moisture bar and percentage of target */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground flex items-center">
+                          <Droplet className="h-3.5 w-3.5 mr-1.5 text-primary" /> Moisture
+                        </span>
+                        <span className="font-bold text-foreground">{zone.moisture}%</span>
+                      </div>
+
+                      <div className="flex justify-between gap-8 items-center">
+                       <div className="w-full h-3 bg-border rounded-full mt-1 mb-1 flex items-center">
+                        <div
+                          className={`h-3 rounded-full ${colors.bar}`}
+                          style={{
+                            width: `${Math.min(100, Math.round((zone.moisture / 80) * 100))}%`,
+                            transition: "width 0.4s"
+                          }}
+                        />
+                      </div>
+                        <span className=" font-bold text-foreground">
+                          {Math.round((zone.moisture / 80) * 100)}%
+                        </span>
+                        </div>
+                    {/* <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground flex items-center">
                       <Calendar className="h-3.5 w-3.5 mr-1.5" /> Last Irrigation
                     </span>
                     <span className="font-semibold text-foreground text-sm">{zone.lastIrrigation}</span>
-                    </div>
+                    </div> */}
                     <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground flex items-center">
                       <Battery className="h-3.5 w-3.5 mr-1.5" /> Battery
                     </span>
-                    <span className="font-semibold text-foreground text-sm">{zone.batteryVoltage}V</span>
+                    <span className="font-bold text-foreground">{zone.batteryVoltage}V</span>
                     </div>
                     <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground flex items-center">
                       <Signal className="h-3.5 w-3.5 mr-1.5" /> Signal
                     </span>
-                    <span className="font-semibold text-foreground text-sm">{zone.signalStrength}%</span>
+                    <span className="font-bold text-foreground">{zone.signalStrength}%</span>
                     </div>
                     {/* Trend Tag */}
                     <div className="flex justify-between items-center mt-2">
                     <span className="text-sm text-muted-foreground flex items-center">
+                      <TrendingUp className="h-4 w-4 mr-1 text-primary" />
                       Trend
                     </span>
                     <span className={
@@ -657,6 +718,31 @@ const Dashboard = () => {
                       })()}
                     </span>
                     </div>
+
+ {/* Issue tag */}
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-sm text-muted-foreground flex items-center">
+                          <AlertCircle className="h-4 w-4 mr-1 text-primary" />
+                          Issue
+                        </span>
+                        <span
+                          className={
+                            (() => {
+                              // Example: East Field has uneven wetting, North Field has dry streaks, others no issues
+                              if (zone.zone === "East Field") return "px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-300";
+                              if (zone.zone === "North Field" && zone.status === "Dry") return "px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold border border-yellow-300";
+                              return "px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold border border-green-300";
+                            })()
+                          }
+                        >
+                          {(() => {
+                            if (zone.zone === "East Field") return "Uneven wetting";
+                            if (zone.zone === "North Field" && zone.status === "Dry") return "Dry streaks detected";
+                            return "No issues";
+                          })()}
+                        </span>
+                      </div>
+
                     <div className="pt-3 mt-3 border-t-2 border-border">
                     <p className={`font-display font-bold text-sm flex items-center justify-center ${colors.text}`}>
                       Status: {zone.status}
@@ -665,6 +751,14 @@ const Dashboard = () => {
                   </div>
                   </CardContent>
                 </Card>
+
+
+
+
+
+
+
+
               );
             })}
           </div>
@@ -674,7 +768,7 @@ const Dashboard = () => {
         <Card className="mb-8 shadow-industrial-lg border-2 border-border/50">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle className="text-3xl font-display font-bold">Moisture Trends by Zone</CardTitle>
+              <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-bold">Moisture Trends by Zone</CardTitle>
               <div className="flex gap-2 flex-wrap">
                 <Button 
                   onClick={() => setChartView("moisture")}
@@ -884,52 +978,48 @@ const Dashboard = () => {
 
         {/* ROI & Reporting Summary */}
         <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5">
-            <CardHeader className="border-b-2 border-border/50 bg-card/50">
-            <CardTitle className="text-3xl font-display font-bold text-foreground flex items-center">
+          <CardHeader className="border-b-2 border-border/50 bg-card/50">
+            <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-bold text-foreground flex items-center">
               <DollarSign className="h-8 w-8 mr-3 text-primary" />
               Reports & Summaries
             </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6 main-content-section">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-0 main-content-p0">
-              <div>
-              <p className="text-lg font-semibold text-primary mb-1">Season Summary Available</p>
-              <p className="text-sm text-muted-foreground">Download or generate reports for your records.</p>
-              </div>
-              <div className="flex gap-3 flex-wrap">
-              <Button size="lg" className="shadow-industrial hover-glow" onClick={generateReport}>
-                <Download className="h-5 w-5 mr-2" />
-                Download Season Summary
-              </Button>
-              <Button size="lg" variant="outline" className="shadow-industrial hover-glow">
-                Generate Cost-Share Report
-              </Button>
-              </div>
-            </div>
-            </CardContent>
+          </CardHeader>
           <CardContent className="pt-6 main-content-section">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-0">
-              <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial">
-                <p className="text-sm text-muted-foreground mb-2">Total Acre-Feet Saved YTD</p>
-                <p className="text-3xl font-display font-bold text-primary">{waterSavedYTD}</p>
-                <p className="text-xs text-muted-foreground mt-1">vs. baseline irrigation</p>
+            <div className="grid md:grid-cols-3 gap-6 mb-0 main-content-p0">
+              {/* Left Card: Irrigation Cycle Summary */}
+              <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial flex flex-col justify-center">
+          <p className="text-sm text-muted-foreground mb-2">Irrigation Cycle Summary</p>
+          <p className="text-[clamp(20px,2vw,30px)] font-display font-bold text-primary">
+            {data.filter(z => z.status === "Optimal").length} of {data.length}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">Fields in Optimal Range</p>
               </div>
-              <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial">
-                <p className="text-sm text-muted-foreground mb-2">Estimated $ Savings</p>
-                <p className="text-3xl font-display font-bold text-chart-2">${estimatedSavings}</p>
-                <p className="text-xs text-muted-foreground mt-1">@ $45/acre-foot</p>
+              {/* Center Card: Lease-to-Own Status */}
+              <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial flex flex-col justify-center">
+          <p className="text-sm text-muted-foreground mb-2">Lease-to-Own Status</p>
+          <p className="text-[clamp(20px,2vw,30px)] font-display font-bold text-chart-2">Month 18 of 36</p>
+          <div className="w-full h-[10px] bg-border rounded-full overflow-hidden mt-3 mb-1">
+            <div
+              className="h-[10px]  bg-primary transition-all duration-500"
+              style={{ width: `${Math.round((18 / 36) * 100)}%` }}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">{Math.round((18 / 36) * 100)}% complete</p>
               </div>
-              <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial">
-                <p className="text-sm text-muted-foreground mb-2">Payback Period</p>
-                <p className="text-3xl font-display font-bold text-foreground">14</p>
-                <p className="text-xs text-muted-foreground mt-1">months estimated</p>
+              {/* Right Card: Reports */}
+              <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial flex flex-col justify-center">
+          <p className="text-lg font-semibold text-primary mb-1">Season Summary Available</p>
+          {/* <p className="text-sm text-muted-foreground mb-4">Download or generate reports for your records.</p> */}
+          <div className="flex flex-col gap-3">
+            <Button size="lg" className="shadow-industrial hover-glow" onClick={generateReport}>
+              <Download className="h-5 w-5 mr-2" />
+              Download Season Summary
+            </Button>
+            <Button size="lg" variant="outline" className="shadow-industrial hover-glow">
+              Generate Cost-Share Report
+            </Button>
+          </div>
               </div>
-              {/* <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial flex items-center justify-center">
-                <Button onClick={generateReport} size="lg" className="w-full shadow-industrial hover-glow h-14">
-                  <Download className="h-5 w-5 mr-2" />
-                  Download WOP Report
-                </Button>
-              </div> */}
             </div>
           </CardContent>
         </Card>
@@ -937,7 +1027,7 @@ const Dashboard = () => {
         {/* System Health Summary */}
         <Card className="mb-8 shadow-industrial-lg border-2 border-border/50">
           <CardHeader>
-            <CardTitle className=" main-content-sectiontext-3xl font-display font-bold flex items-center">
+            <CardTitle className=" main-content-section text-[clamp(20px,2vw,30px)] font-display font-bold flex items-center">
               <Activity className="h-8 w-8 mr-3 text-primary" />
               System Health Summary
             </CardTitle>

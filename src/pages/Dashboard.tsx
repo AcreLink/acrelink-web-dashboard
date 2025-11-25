@@ -606,7 +606,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-between items-center mb-6 gap-6">
+        <div className="flex flex-wrap sm:justify-between justify-center items-center mb-6 gap-6">
           <p className="text-sm text-muted-foreground font-medium">
             Last updated: <span className="font-bold text-foreground">{lastUpdated}</span>
           </p>
@@ -665,7 +665,7 @@ const Dashboard = () => {
                         <span className="font-bold text-foreground">{zone.moisture}%</span>
                       </div>
 
-                      <div className="flex justify-between gap-8 items-center">
+                      {/* <div className="flex justify-between gap-8 items-center">
                        <div className="w-full h-3 bg-border rounded-full mt-1 mb-1 flex items-center">
                         <div
                           className={`h-3 rounded-full ${colors.bar}`}
@@ -678,7 +678,7 @@ const Dashboard = () => {
                         <span className=" font-bold text-foreground">
                           {Math.round((zone.moisture / 80) * 100)}%
                         </span>
-                        </div>
+                        </div> */}
                     {/* <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground flex items-center">
                       <Calendar className="h-3.5 w-3.5 mr-1.5" /> Last Irrigation
@@ -698,14 +698,14 @@ const Dashboard = () => {
                     <span className="font-bold text-foreground">{zone.signalStrength}%</span>
                     </div>
                     {/* Trend Tag */}
-                    <div className="flex justify-between items-center mt-2">
+                    {/* <div className="flex justify-between items-center mt-2">
                     <span className="text-sm text-muted-foreground flex items-center">
                       <TrendingUp className="h-4 w-4 mr-1 text-primary" />
                       Trend
                     </span>
                     <span className={
                       (() => {
-                      // Example logic: Drying fast if moisture < 35 and status is Dry, Stable if Wet, Normal otherwise
+              
                       if (zone.status === "Dry" && zone.moisture < 35) return "px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400";
                       if (zone.status === "Wet") return "px-2 py-0.5 rounded-full bg-blue-200 text-blue-800 text-xs font-semibold border border-blue-400";
                       return "px-2 py-0.5 rounded-full bg-green-200 text-green-800 text-xs font-semibold border border-green-400";
@@ -717,10 +717,10 @@ const Dashboard = () => {
                       return "Normal";
                       })()}
                     </span>
-                    </div>
+                    </div> */}
 
  {/* Issue tag */}
-                      <div className="flex justify-between items-center mt-2">
+                      {/* <div className="flex justify-between items-center mt-2">
                         <span className="text-sm text-muted-foreground flex items-center">
                           <AlertCircle className="h-4 w-4 mr-1 text-primary" />
                           Issue
@@ -741,7 +741,7 @@ const Dashboard = () => {
                             return "No issues";
                           })()}
                         </span>
-                      </div>
+                      </div> */}
 
                     <div className="pt-3 mt-3 border-t-2 border-border">
                     <p className={`font-display font-bold text-sm flex items-center justify-center ${colors.text}`}>
@@ -768,7 +768,13 @@ const Dashboard = () => {
         <Card className="mb-8 shadow-industrial-lg border-2 border-border/50">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
               <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-bold">Moisture Trends by Zone</CardTitle>
+               <p className="text-lg text-muted-foreground">
+            Green Shaded Area is Optimal Moisture Zone” (80%-100%)
+          </p>
+          </div>
+
               <div className="flex gap-2 flex-wrap">
                 <Button 
                   onClick={() => setChartView("moisture")}

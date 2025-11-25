@@ -240,7 +240,7 @@ const Dashboard = () => {
         <div className="mb-8">
           <h2 className="text-[clamp(23px,2vw,36px)] font-display font-bold text-foreground ">AcreLink Pilot Dashboard</h2>
           <p className="text-lg text-muted-foreground">
-            Drop “savings data”
+            Real-time irrigation insights and system performance for your connected fields.
           </p>
         </div>
 
@@ -262,7 +262,7 @@ const Dashboard = () => {
       <div className="main-content-section  flex flex-col md:flex-row md:items-start md:justify-between gap-8 bg-card/80 border-2 border-border/50 rounded-lg p-6 shadow-industrial">
         <div className="flex-1 space-y-4 min-w-[200px]">
           {/* Summary Sentence */}
-          <div className="mb-4">
+          {/* <div className="mb-4">
             {lowMoistureZones.length > 0 ? (
               <span className="font-medium text-destructive">
                 {lowMoistureZones.map(z => z.zone).join(", ")} moisture is below optimal range. All other zones are on track.
@@ -272,7 +272,48 @@ const Dashboard = () => {
                 All zones are on track.
               </span>
             )}
-          </div>
+          </div> */}
+
+
+              <div
+              className={`text-s font-medium mb-2 ${
+                lowMoistureZones.length > 0
+                  ? "border-2 border-destructive/60 bg-destructive/10 rounded-lg p-2 text-destructive"
+                  : "border-2 border-green-500/60 bg-green-100/40 rounded-lg p-2 text-green-700"
+              }`}
+            >
+              {lowMoistureZones.length > 0 ? (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <AlertCircle className="h-5 w-5 text-destructive" />
+                  <span>
+                    <span className="font-bold">
+                      {lowMoistureZones.length === 1
+                        ? lowMoistureZones[0].zone
+                        : `${lowMoistureZones.length} zones`}
+                    </span>{" "}
+                   moisture is below optimal range. 
+                    
+                    <span className="ml-2  ">
+                      All other zones are on track.
+                    </span>
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <svg
+                    className="h-5 w-5 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>All zones are on track. No immediate irrigation needed.</span>
+                </div>
+              )}
+            </div>
+
 
           {/* Priority Zones */}
           {lowMoistureZones.length > 0 && (
@@ -280,15 +321,27 @@ const Dashboard = () => {
               <h3 className="text-lg font-bold mb-2">Priority Zones</h3>
               <ul className="space-y-2">
                 {lowMoistureZones.map(zone => (
-                  <li key={zone.zone} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-[#efeeeb80]-300 bg-[#efeeeb80] rounded-lg p-4">
-                    <div className="flex items-center gap-3 white-space-nowrap">
+                  <li key={zone.zone} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-[#efeeeb80]-300 bg-[#efeeeb80] rounded-lg p-4">
+                    <div className="flex items-center gap-3 flex-wrap whitespace-nowrap sm:justify-center">
+                      <span className="font-bold text-gray-900 whitespace-nowrap">{zone.zone}</span>
+                      <span className="text-xs text-gray-700 font-semibold whitespace-nowrap">{zone.moisture}% moisture</span>
                       <span className="px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400">Watch</span>
-                      <span className="font-bold text-gray-900 white-space-nowrap">{zone.zone}</span>
-                      <span className="text-xs text-gray-700 font-semibold white-space-nowrap">{zone.moisture}% moisture</span>
                     </div>
                     <div className="flex flex-col md:flex-row gap-3 items-center">
-                      <span className="text-xs text-yellow-800 bg-yellow-100 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">Zone drying faster than normal</span>
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">Action: Address at next irrigation cycle</span>
+                      <span className="flex items-center gap-1 text-xs text-800 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">
+                        <AlertCircle className="h-4 w-4 text-gray-700" />
+                        <span className="text-sm text-muted-foreground">Drying trend: </span>
+                         <span className="font-bold text text-base">Zone drying faster than normal</span>
+                        
+                      </span>
+                      <span className="flex items-center gap-1 text-xs  text-blue-700 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">
+                        <CloudRain className="h-4 w-4 text-gray-700" />
+                         <span className="text-sm text-muted-foreground">Action: </span>
+                         <span className="font-bold text-primary text-base">Address at next irrigation cycle</span>
+                        
+                      </span>
+
+                     
                     </div>
                   </li>
                 ))}
@@ -1014,7 +1067,7 @@ const Dashboard = () => {
               </div>
               {/* Right Card: Reports */}
               <div className="bg-card/80 border-2 border-border/50 rounded-lg p-5 shadow-industrial flex flex-col justify-center">
-          <p className="text-lg font-semibold text-primary mb-1">Season Summary Available</p>
+          <p className="text-lg font-semibold text-primary mb-3">Season Summary Available</p>
           {/* <p className="text-sm text-muted-foreground mb-4">Download or generate reports for your records.</p> */}
           <div className="flex flex-col gap-3">
             <Button size="lg" className="shadow-industrial hover-glow btn-style" onClick={generateReport}>

@@ -238,7 +238,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8 main-content-section">
         <div className="mb-8">
-          <h2 className="text-[clamp(23px,2vw,36px)] font-display font-bold text-foreground mb-[clamp(10px,1.5vw,15px)]">AcreLink Pilot Dashboard</h2>
+          <h2 className="text-[clamp(23px,2vw,36px)] font-display font-bold text-foreground ">AcreLink Pilot Dashboard</h2>
           <p className="text-lg text-muted-foreground">
             Drop “savings data”
           </p>
@@ -287,8 +287,8 @@ const Dashboard = () => {
                       <span className="text-xs text-gray-700 font-semibold white-space-nowrap">{zone.moisture}% moisture</span>
                     </div>
                     <div className="flex flex-col md:flex-row gap-3 items-center">
-                      <span className="text-xs text-yellow-800 bg-yellow-100 px-2 py-1 rounded whitespace-nowrap">Zone drying faster than normal</span>
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded whitespace-nowrap">Action: Address at next irrigation cycle</span>
+                      <span className="text-xs text-yellow-800 bg-yellow-100 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">Zone drying faster than normal</span>
+                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">Action: Address at next irrigation cycle</span>
                     </div>
                   </li>
                 ))}
@@ -552,7 +552,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <Card className="shadow-industrial hover-lift border-2 border-border/50">
               <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
+          <CardTitle className="text-sm flex-wrap gap-3 font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
             <AlertCircle className="h-6 w-6 mr-2 text-destructive" />
             Number of zones at risk today
           </CardTitle>
@@ -564,7 +564,7 @@ const Dashboard = () => {
             </Card>
             <Card className="shadow-industrial hover-lift border-2 border-border/50">
               <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
+          <CardTitle className=" flex-wrap gap-3 text-sm font-display font-semibold text-muted-foreground uppercase tracking-wide flex items-center">
             <TrendingUp className="h-6 w-6 mr-2 text-primary" />
             Percentage of acres currently on track
           </CardTitle>
@@ -588,16 +588,16 @@ const Dashboard = () => {
               </CardContent>
             </Card> */}
           </div>
-          <div className=" p-4 main-content-p0">
+          <div className="  main-content-p0">
             <ul className="space-y-2">
-              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap items-center text-yellow-800 text-s font-medium">
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap gap-2 items-center text-yellow-800 text-s font-medium">
                 
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600"  />
           North Field drying faster than normal
               </li>
               </Alert>
 
-              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap items-center text-yellow-800 text-s font-medium">
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap gap-2 items-center text-yellow-800 text-s font-medium">
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
           East Field uneven wetting last irrigation
               </li>
@@ -765,9 +765,9 @@ const Dashboard = () => {
         </div>
 
         {/* Trends and Analytics */}
-        <Card className="mb-8 shadow-industrial-lg border-2 border-border/50">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <Card className=" mb-8 shadow-industrial-lg border-2 border-border/50">
+          <CardHeader className="main-content-section">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ">
               <div>
               <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-bold">Moisture Trends by Zone</CardTitle>
                <p className="text-lg text-muted-foreground">
@@ -775,7 +775,7 @@ const Dashboard = () => {
           </p>
           </div>
 
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 justify-end flex-wrap">
                 <Button 
                   onClick={() => setChartView("moisture")}
                   variant={chartView === "moisture" ? "default" : "outline"}
@@ -795,7 +795,7 @@ const Dashboard = () => {
               </div>
             </div>
           </CardHeader>
-          <CardContent   >
+          <CardContent className="main-content-section"  >
             {chartView === "moisture" && (
               <>
                 <ResponsiveContainer width="100%" height={350}>
@@ -838,14 +838,14 @@ const Dashboard = () => {
                   </LineChart>
                 </ResponsiveContainer>
                 {/* Custom legend with checkboxes for toggling zones (only this row, no line legend above) */}
-                <div className="flex justify-center gap-6 mt-4 mb-2">
+                <div className="flex justify-center flex-wrap gap-6 mt-4 mb-2">
                   {[
                     { zone: "North Field", color: "hsl(var(--chart-1))" },
                     { zone: "South Field", color: "#e2b93b" },
                     { zone: "East Field", color: "#3bb8a6" },
                     { zone: "West Field", color: "#8B5CF6" }
                   ].map(({ zone, color }) => (
-                    <label key={zone} className="flex items-center gap-2 cursor-pointer">
+                    <label key={zone} className="flex  items-center gap-2 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={enabledZones[zone]}
@@ -853,7 +853,7 @@ const Dashboard = () => {
                         style={{ accentColor: color }}
                         className="w-5 h-5 rounded focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                       />
-                      <span style={{ color, fontWeight: 600 }}>{zone}</span>
+                      <span className="whitespace-nowrap text-[clamp(14px,2vw,16px)]" style={{ color, fontWeight: 600 }}>{zone}</span>
                     </label>
                   ))}
                 </div>
@@ -1017,11 +1017,12 @@ const Dashboard = () => {
           <p className="text-lg font-semibold text-primary mb-1">Season Summary Available</p>
           {/* <p className="text-sm text-muted-foreground mb-4">Download or generate reports for your records.</p> */}
           <div className="flex flex-col gap-3">
-            <Button size="lg" className="shadow-industrial hover-glow" onClick={generateReport}>
+            <Button size="lg" className="shadow-industrial hover-glow btn-style" onClick={generateReport}>
               <Download className="h-5 w-5 mr-2" />
               Download Season Summary
             </Button>
-            <Button size="lg" variant="outline" className="shadow-industrial hover-glow">
+
+            <Button size="lg" variant="outline" className="shadow-industrial hover-glow btn-style">
               Generate Cost-Share Report
             </Button>
           </div>
@@ -1032,8 +1033,8 @@ const Dashboard = () => {
 
         {/* System Health Summary */}
         <Card className="mb-8 shadow-industrial-lg border-2 border-border/50">
-          <CardHeader>
-            <CardTitle className=" main-content-section text-[clamp(20px,2vw,30px)] font-display font-bold flex items-center">
+          <CardHeader className="main-content-section">
+            <CardTitle className="  text-[clamp(20px,2vw,30px)] font-display font-bold flex items-center">
               <Activity className="h-8 w-8 mr-3 text-primary" />
               System Health Summary
             </CardTitle>
@@ -1049,7 +1050,7 @@ const Dashboard = () => {
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell className="font-semibold">Sensors Online</TableCell>
+                  <TableCell className="font-semibold whitespace-nowrap">Sensors Online</TableCell>
                   <TableCell className="text-right font-bold text-s">
                     {activeSensors} / {activeSensors + offlineSensors}
                   </TableCell>
@@ -1060,7 +1061,7 @@ const Dashboard = () => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold">Average Battery Level</TableCell>
+                  <TableCell className="font-semibold whitespace-nowrap">Average Battery Level</TableCell>
                   <TableCell className="text-right font-bold text-s whitespace-nowrap">{avgBatteryVoltage}V</TableCell>
                   <TableCell className="text-right">
                     <span className={
@@ -1073,7 +1074,7 @@ const Dashboard = () => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold">Last Sync Time</TableCell>
+                  <TableCell className="font-semibold whitespace-nowrap">Last Sync Time</TableCell>
                   <TableCell className="text-right font-bold text-s whitespace-nowrap ">{lastUpdated}</TableCell>
                   <TableCell className="text-right">
                     <span className={

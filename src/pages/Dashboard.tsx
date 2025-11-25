@@ -23,8 +23,8 @@ const Dashboard = () => {
     const [enabledZones, setEnabledZones] = useState<{ [zone: string]: boolean }>({
       "North Field": true,
       "South Field": true,
-      "East Orchard": true,
-      "West Pasture": true,
+      "East Field": true,
+      "West Field": true,
     });
 
     const handleToggleZone = (zone: string) => {
@@ -34,8 +34,8 @@ const Dashboard = () => {
   const [data, setData] = useState<SensorZone[]>([
     { zone: "North Field", moisture: 28, temperature: 19, status: "Dry", lastIrrigation: "36 hours ago", batteryVoltage: 3.2, signalStrength: 85 },
     { zone: "South Field", moisture: 42, temperature: 21, status: "Optimal", lastIrrigation: "18 hours ago", batteryVoltage: 3.6, signalStrength: 92 },
-    { zone: "East Orchard", moisture: 65, temperature: 23, status: "Wet", lastIrrigation: "12 hours ago", batteryVoltage: 3.8, signalStrength: 78 },
-    { zone: "West Pasture", moisture: 51, temperature: 20, status: "Optimal", lastIrrigation: "24 hours ago", batteryVoltage: 3.5, signalStrength: 88 },
+    { zone: "East Field", moisture: 65, temperature: 23, status: "Wet", lastIrrigation: "12 hours ago", batteryVoltage: 3.8, signalStrength: 78 },
+    { zone: "West Field", moisture: 51, temperature: 20, status: "Optimal", lastIrrigation: "24 hours ago", batteryVoltage: 3.5, signalStrength: 88 },
   ]);
   const [history, setHistory] = useState<Array<{ timestamp: string; North: number; South: number; East: number; West: number }>>([]);
   const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString());
@@ -685,20 +685,12 @@ const Dashboard = () => {
                   Soil Moisture
                 </Button>
                 <Button 
-                  onClick={() => setChartView("water")}
-                  variant={chartView === "water" ? "default" : "outline"}
-                  size="sm"
-                  className="text-xs"
-                >
-                  Water Applied
-                </Button>
-                <Button 
                   onClick={() => setChartView("forecast")}
                   variant={chartView === "forecast" ? "default" : "outline"}
                   size="sm"
                   className="text-xs"
                 >
-                  3-Day Forecast
+                  Drying Forecast (7 day future)
                 </Button>
               </div>
             </div>
@@ -737,11 +729,11 @@ const Dashboard = () => {
                     {enabledZones["South Field"] && (
                       <Line type="monotone" dataKey="South" stroke="hsl(var(--chart-2))" name="South Field" strokeWidth={3} />
                     )}
-                    {enabledZones["East Orchard"] && (
-                      <Line type="monotone" dataKey="East" stroke="hsl(var(--chart-3))" name="East Orchard" strokeWidth={3} />
+                    {enabledZones["East Field"] && (
+                      <Line type="monotone" dataKey="East" stroke="hsl(var(--chart-3))" name="East Field" strokeWidth={3} />
                     )}
-                    {enabledZones["West Pasture"] && (
-                      <Line type="monotone" dataKey="West" stroke="#8B5CF6" name="West Pasture" strokeWidth={3} dot={{ r: 4 }} />
+                    {enabledZones["West Field"] && (
+                      <Line type="monotone" dataKey="West" stroke="#8B5CF6" name="West Field" strokeWidth={3} dot={{ r: 4 }} />
                     )}
                   </LineChart>
                 </ResponsiveContainer>
@@ -750,8 +742,8 @@ const Dashboard = () => {
                   {[
                     { zone: "North Field", color: "hsl(var(--chart-1))" },
                     { zone: "South Field", color: "#e2b93b" },
-                    { zone: "East Orchard", color: "#3bb8a6" },
-                    { zone: "West Pasture", color: "#8B5CF6" }
+                    { zone: "East Field", color: "#3bb8a6" },
+                    { zone: "West Field", color: "#8B5CF6" }
                   ].map(({ zone, color }) => (
                     <label key={zone} className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -817,9 +809,18 @@ const Dashboard = () => {
                 <ResponsiveContainer width="100%" height={350}>
                   <LineChart data={[
                     { day: 'Today', North: avgMoisture + 2, South: avgMoisture - 3, East: avgMoisture + 8, West: avgMoisture + 5 },
-                    { day: 'Day +1', North: avgMoisture - 2, South: avgMoisture - 6, East: avgMoisture + 5, West: avgMoisture + 2 },
-                    { day: 'Day +2', North: avgMoisture - 5, South: avgMoisture - 9, East: avgMoisture + 2, West: avgMoisture - 1 },
-                    { day: 'Day +3', North: avgMoisture - 8, South: avgMoisture - 12, East: avgMoisture - 1, West: avgMoisture - 4 },
+                    ...Array.from({ length: 6 }, (_, i) => {
+                      const futureDate = new Date();
+                      futureDate.setDate(futureDate.getDate() + i + 1);
+                      const label = futureDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      return {
+                        day: label,
+                        North: avgMoisture - 2 - i * 3,
+                        South: avgMoisture - 6 - i * 3,
+                        East: avgMoisture + 5 - i * 3,
+                        West: avgMoisture + 2 - i * 3,
+                      };
+                    })
                   ]}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis 
@@ -848,11 +849,11 @@ const Dashboard = () => {
                     {enabledZones["South Field"] && (
                       <Line type="monotone" dataKey="South" stroke="#e2b93b" name="South Field" strokeWidth={3} strokeDasharray="5 5" />
                     )}
-                    {enabledZones["East Orchard"] && (
-                      <Line type="monotone" dataKey="East" stroke="#3bb8a6" name="East Orchard" strokeWidth={3} strokeDasharray="5 5" />
+                    {enabledZones["East Field"] && (
+                      <Line type="monotone" dataKey="East" stroke="#3bb8a6" name="East Field" strokeWidth={3} strokeDasharray="5 5" />
                     )}
-                    {enabledZones["West Pasture"] && (
-                      <Line type="monotone" dataKey="West" stroke="#8B5CF6" name="West Pasture" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 4 }} />
+                    {enabledZones["West Field"] && (
+                      <Line type="monotone" dataKey="West" stroke="#8B5CF6" name="West Field" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 4 }} />
                     )}
                   </LineChart>
                 </ResponsiveContainer>
@@ -861,8 +862,8 @@ const Dashboard = () => {
                   {[
                     { zone: "North Field", color: "hsl(var(--chart-1))" },
                     { zone: "South Field", color: "#e2b93b" },
-                    { zone: "East Orchard", color: "#3bb8a6" },
-                    { zone: "West Pasture", color: "#8B5CF6" }
+                    { zone: "East Field", color: "#3bb8a6" },
+                    { zone: "West Field", color: "#8B5CF6" }
                   ].map(({ zone, color }) => (
                     <label key={zone} className="flex items-center gap-2 cursor-pointer">
                       <input

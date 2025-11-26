@@ -285,7 +285,7 @@ const Dashboard = () => {
               {lowMoistureZones.length > 0 ? (
                 <div className="flex items-center gap-2 flex-wrap">
                   <AlertCircle className="h-5 w-5 text-destructive" />
-                  <span>
+                  <span className="text-[clamp(14px,2vw,18px)]">
                     <span className="font-bold text-[clamp(14px,2vw,18px)]">
                       {lowMoistureZones.length === 1
                         ? lowMoistureZones[0].zone
@@ -293,7 +293,7 @@ const Dashboard = () => {
                     </span>{" "}
                    moisture is below optimal range. 
                     
-                    <span className="ml-2  ">
+                    <span className="ml-1 text-[clamp(14px,2vw,18px)]  ">
                       All other zones are on track.
                     </span>
                   </span>

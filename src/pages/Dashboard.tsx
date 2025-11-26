@@ -239,7 +239,7 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-6 py-8 main-content-section">
         <div className="mb-8">
           <h2 className="text-[clamp(23px,2vw,36px)] font-display font-bold text-foreground ">AcreLink Pilot Dashboard</h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-[clamp(14px,2vw,18px)] text-muted-foreground">
             Real-time irrigation insights and system performance for your connected fields.
           </p>
         </div>
@@ -286,7 +286,7 @@ const Dashboard = () => {
                 <div className="flex items-center gap-2 flex-wrap">
                   <AlertCircle className="h-5 w-5 text-destructive" />
                   <span>
-                    <span className="font-bold">
+                    <span className="font-bold text-[clamp(14px,2vw,18px)]">
                       {lowMoistureZones.length === 1
                         ? lowMoistureZones[0].zone
                         : `${lowMoistureZones.length} zones`}
@@ -309,7 +309,7 @@ const Dashboard = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>All zones are on track. No immediate irrigation needed.</span>
+                  <span className="text-[clamp(14px,2vw,18px)]">All zones are on track. No immediate irrigation needed.</span>
                 </div>
               )}
             </div>
@@ -328,16 +328,20 @@ const Dashboard = () => {
                       <span className="px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-800 text-xs font-semibold border border-yellow-400">Watch</span>
                     </div>
                     <div className="flex flex-col md:flex-row gap-3 items-center">
-                      <span className="flex items-center gap-1 text-xs text-800 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">
-                        <AlertCircle className="h-4 w-4 text-gray-700" />
+                      <span className="flex items-center flex-wrap gap-3 text-xs text-800 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">
+                        <div className="flex items-center gap-1">
+                        <AlertCircle className="min-h-16px min-w-16px text-gray-700" />
                         <span className="text-sm text-muted-foreground">Drying trend: </span>
-                         <span className="font-bold text text-base">Zone drying faster than normal</span>
+                        </div>
+                         <span className="font-bold text-sm">Zone drying faster than normal</span>
                         
                       </span>
-                      <span className="flex items-center gap-1 text-xs  text-blue-700 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">
-                        <CloudRain className="h-4 w-4 text-gray-700" />
+                      <span className="flex items-center flex-wrap gap-3 text-xs  text-blue-700 px-2 py-1 rounded md:whitespace-nowrap whitespace-pre-line">
+                        <div className="flex items-center gap-1">
+                        <CloudRain className="min-h-16px min-w-16px text-gray-700" />
                          <span className="text-sm text-muted-foreground">Action: </span>
-                         <span className="font-bold text-primary text-base">Address at next irrigation cycle</span>
+                         </div>
+                         <span className="font-bold text-primary text-sm">Address at next irrigation cycle</span>
                         
                       </span>
 
@@ -643,14 +647,14 @@ const Dashboard = () => {
           </div>
           <div className="  main-content-p0">
             <ul className="space-y-2">
-              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap gap-2 items-center text-yellow-800 text-s font-medium">
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap gap-2 items-center text-yellow-800 text-[clamp(14px,2vw,18px)] font-medium">
                 
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600"  />
           North Field drying faster than normal
               </li>
               </Alert>
 
-              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap gap-2 items-center text-yellow-800 text-s font-medium">
+              <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><li className="flex flex-wrap gap-2 items-center text-yellow-800 text-[clamp(14px,2vw,18px)] font-medium">
           <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
           East Field uneven wetting last irrigation
               </li>
@@ -823,7 +827,7 @@ const Dashboard = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ">
               <div>
               <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-bold">Moisture Trends by Zone</CardTitle>
-               <p className="text-lg text-muted-foreground">
+               <p className="text-[clamp(14px,2vw,18px)] text-muted-foreground">
             Green Shaded Area is Optimal Moisture Zone” (80%-100%)
           </p>
           </div>

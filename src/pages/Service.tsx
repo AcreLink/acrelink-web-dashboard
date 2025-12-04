@@ -1,4 +1,3 @@
-// src/pages/service/ServicePage.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,41 +12,32 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, QrCode } from "lucide-react";
 import acreLinkLogo from "@/assets/acrelink-logo.png";
-import { QrCode } from "lucide-react";
+import { toast } from "react-toastify";
 
-// --- Mock Data (replace with API calls later) ---
+
+const MOCK_HISTORY: string[] = [
+  "2025-03-10 – Installed at 6–8 in, east field, Parker",
+  "2025-04-15 – Checked connectivity, OK",
+];
+
+// --- Mock Data (for first load only) ---
 const MOCK_SITES = [
   { id: "none", name: "Select a site", info: "" },
-  {
-    id: "demo-a",
-    name: "Demo Site A",
-    info: "Hay Farm, 20 sensors planned",
-    planned: 20,
-  },
-  {
-    id: "demo-b",
-    name: "Demo Site B",
-    info: "Orchard, 35 sensors planned",
-    planned: 35,
-  },
-  {
-    id: "demo-c",
-    name: "Demo Site C",
-    info: "Wheat Farm, 21 sensors planned",
-    planned: 21,
-  },
+  { id: "demo-a", name: "Demo Site A", info: "Hay Farm" },
+  { id: "demo-b", name: "Demo Site B", info: "Orchard" },
+  { id: "demo-c", name: "Demo Site C", info: "Wheat Farm" },
 ];
 
 type SensorStatus = "Planned" | "Installed" | "Needs service" | "Offline";
 
 type Sensor = {
-  id: string; // unique e.g. ACR-0001
+  id: string;
   label?: string;
   siteId: string;
   depth?: "Shallow (0–6 in)" | "Medium (6–12 in)" | "Deep (12–24 in)";
-  installDate?: string; // ISO
+  installDate?: string;
   gps?: {
     lat: number;
     lng: number;
@@ -56,7 +46,11 @@ type Sensor = {
   } | null;
   status?: SensorStatus;
   notes?: string;
-  history?: string[]; // simple list of past events
+  history?: string[];
+  devEUI?: string;    // add this
+  battery?: string;   // add this
+  rf?: string;        // add this
+  lastSeen?: string;  // add this
 };
 
 const DEFAULT_MOCK_SENSORS: Sensor[] = [
@@ -68,7 +62,11 @@ const DEFAULT_MOCK_SENSORS: Sensor[] = [
     gps: null,
     status: "Installed",
     notes: "",
-    history: ["2025-03-10 – Installed at 6–8 in, east field, Parker"],
+    history: MOCK_HISTORY,
+    devEUI: "ABC123456790",
+    battery: "75%",
+    rf: "Poor",
+    lastSeen: "2025-04-01 10:30 AM",
   },
   {
     id: "ACR-0002",
@@ -78,7 +76,11 @@ const DEFAULT_MOCK_SENSORS: Sensor[] = [
     gps: null,
     status: "Planned",
     notes: "",
-    history: [],
+    history: MOCK_HISTORY,
+    devEUI: "ABC123456789",
+    battery: "85%",
+    rf: "Good",
+    lastSeen: "2025-04-01 10:30 AM",
   },
   {
     id: "ACR-0101",
@@ -93,7 +95,11 @@ const DEFAULT_MOCK_SENSORS: Sensor[] = [
     },
     status: "Installed",
     notes: "Near oak tree",
-    history: ["2025-02-20 – Installed by Lopez"],
+    history: MOCK_HISTORY,
+    devEUI: "ABC123456789",
+    battery: "85%",
+    rf: "Good",
+    lastSeen: "2025-04-01 10:30 AM",
   },
   {
     id: "ACR-0201",
@@ -103,63 +109,99 @@ const DEFAULT_MOCK_SENSORS: Sensor[] = [
     gps: null,
     status: "Needs service",
     notes: "Intermittent connectivity",
-    history: ["2025-04-15 – Checked connectivity, OK"],
+    history: MOCK_HISTORY,
+    devEUI: "ABC123456789",
+    battery: "85%",
+    rf: "Good",
+    lastSeen: "2025-04-01 10:30 AM",
   },
 ];
 
-// --- Utilities ---
-const metersToFeet = (m: number) => m * 3.28084;
-const nowISO = () => new Date().toISOString();
+// --- Load initial data from localStorage or fallback to mock ---
+const loadInitialData = () => {
+  const storedSensors = localStorage.getItem("acrelink_service_sensors");
+  const storedSites = localStorage.getItem("acrelink_sites");
 
-function makeId() {
-  // Simple ID generator for new sensors
-  const n = Math.floor(Math.random() * 9000) + 1000;
-  return `ACR-${n.toString().slice(0, 4)}`;
-}
+  let sensors: Sensor[] = storedSensors
+    ? JSON.parse(storedSensors)
+    : DEFAULT_MOCK_SENSORS;
 
-// --- Main Page ---
-const Service: React.FC = () => {
-  // Load sensors from localStorage or use mock
-  const [sensors, setSensors] = useState<Sensor[]>(() => {
-    try {
-      const raw = localStorage.getItem("acrelink_service_sensors");
-      if (raw) return JSON.parse(raw) as Sensor[];
-    } catch (e) {
-      /* ignore */
-    }
-    return DEFAULT_MOCK_SENSORS;
-  });
-
-  useEffect(() => {
-    // persist to localStorage
+  // Save sensors if not present in localStorage
+  if (!storedSensors) {
     localStorage.setItem("acrelink_service_sensors", JSON.stringify(sensors));
-  }, [sensors]);
-  const [selectedSiteId, setSelectedSiteId] = useState<string>("none");
-  // const [selectedSiteId, setSelectedSiteId] = useState<string>(MOCK_SITES[0].id);
+  }
+
+  let sites = storedSites
+    ? JSON.parse(storedSites)
+    : MOCK_SITES.map((site) => {
+      if (site.id === "none") return site;
+      const plannedCount = sensors.filter((s) => s.siteId === site.id).length;
+      return { ...site, planned: plannedCount };
+    });
+
+  if (!storedSites) {
+    localStorage.setItem("acrelink_sites", JSON.stringify(sites));
+  }
+
+  return { sensors, sites };
+};
+
+// --- Utility functions ---
+const metersToFeet = (m: number) => m * 3.28084;
+// const makeId = () => `ACR-${Math.floor(Math.random() * 9000 + 1000)}`;
+
+// --- Main Component ---
+const Service: React.FC = () => {
+  const { sensors: initialSensors, sites: initialSites } = loadInitialData();
+
+  const [sensors, setSensors] = useState<Sensor[]>(initialSensors);
+  const [sites, setSites] = useState(initialSites);
+  const [selectedSiteId, setSelectedSiteId] = useState("none");
   const [searchTerm, setSearchTerm] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
   const [editingSensor, setEditingSensor] = useState<Sensor | null>(null);
   const [remarks, setRemarks] = useState("");
-  const [techName] = useState("Parker"); // placeholder; in future replace with auth
+  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
+  const [techName] = useState("Parker");
+  console.log(editingSensor)
+  // --- Persist sensors and update planned count ---
+  useEffect(() => {
+    localStorage.setItem("acrelink_service_sensors", JSON.stringify(sensors));
 
-  // Filter sensors by selected site and search
+    const updatedSites = sites.map((site) => {
+      if (site.id === "none") return site;
+      const plannedCount = sensors.filter((s) => s.siteId === site.id).length;
+      return { ...site, planned: plannedCount };
+    });
+
+    setSites(updatedSites);
+    localStorage.setItem("acrelink_sites", JSON.stringify(updatedSites));
+  }, [sensors]);
+
+  // --- Filter sensors by selected site & search ---
   const visibleSensors = useMemo(() => {
     return sensors
       .filter((s) => s.siteId === selectedSiteId)
       .filter((s) => {
         if (!searchTerm) return true;
         const t = searchTerm.toLowerCase();
-        return (
-          s.id.toLowerCase().includes(t) ||
-          (s.label || "").toLowerCase().includes(t)
-        );
+        return s.id.toLowerCase().includes(t) || (s.label || "").toLowerCase().includes(t);
       })
       .sort((a, b) => a.id.localeCompare(b.id));
   }, [sensors, selectedSiteId, searchTerm]);
 
-  // Open panel for create
+  const randomDevEUI = () => 'ABC' + Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, '0');
+  const randomBattery = () => `${Math.floor(Math.random() * 51) + 50}%`; // 50%-100%
+  const randomRF = () => ["Good", "Fair", "Poor"][Math.floor(Math.random() * 3)];
+  const randomLastSeen = () => {
+    const start = new Date(2025, 0, 1).getTime();
+    const end = Date.now();
+    return new Date(start + Math.random() * (end - start)).toLocaleString('en-US', { hour12: true });
+  };
+
   const openCreate = () => {
-    const newSensor: Sensor = {
+    if (selectedSiteId === "none") return alert("Select a site first");
+    setEditingSensor({
       id: "",
       siteId: selectedSiteId,
       depth: undefined,
@@ -167,98 +209,55 @@ const Service: React.FC = () => {
       gps: null,
       status: "Planned",
       notes: "",
-      history: [],
-    };
-    setEditingSensor(newSensor);
-    setPanelOpen(true);
-  };
-
-  // Open panel for edit
-  const openEdit = (s: Sensor) => {
-    // simple deep clone
-    setEditingSensor(JSON.parse(JSON.stringify(s)));
-    setPanelOpen(true);
-  };
-
-  // Save sensor (stub: updates local state)
-  const saveSensor = (sensor: Sensor) => {
-    if (!sensor.id || sensor.id.trim() === "") {
-      // For new sensors, generate id if not provided
-      sensor.id = makeId();
-    }
-
-    setSensors((prev) => {
-      const existingIdx = prev.findIndex((p) => p.id === sensor.id);
-      if (existingIdx >= 0) {
-        // update
-        const copy = [...prev];
-        copy[existingIdx] = sensor;
-        return copy;
-      } else {
-        // add
-        return [sensor, ...prev];
-      }
+      history: MOCK_HISTORY,
+      devEUI: randomDevEUI(),
+      battery: randomBattery(),
+      rf: randomRF(),
+      lastSeen: randomLastSeen(),
     });
+    setPanelOpen(true);
+  };
 
-    // stubbed save action - console log and localStorage handled by hook
-    console.log("Stub save sensor:", sensor);
-    alert(`Saved ${sensor.id}`);
+
+  const openEdit = (sensor: Sensor) => {
+    setEditingSensor(JSON.parse(JSON.stringify(sensor)));
+    setPanelOpen(true);
+  };
+
+  const saveSensor = (sensor: Sensor) => {
+    // if (!sensor.id.trim()) sensor.id = makeId();
+    const id = sensor.id.trim();
+    if (!id) return toast.error("Sensor ID cannot be empty!");
+    if (!sensor?.depth) return toast.error("Depth cannot be select!");
+
+    // Check if ID already exists (excluding the current editing sensor if editing)
+    const exists = sensors.some(
+      (s) => s.id === id && s !== editingSensor
+    );
+    if (exists) return toast.error(`Sensor ID "${id}" already exists!`);
+    setSensors((prev) => {
+      const idx = prev.findIndex((s) => s.id === sensor.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = sensor;
+        return copy;
+      }
+      return [sensor, ...prev];
+    });
     setPanelOpen(false);
     setEditingSensor(null);
+    toast.success(`Saved ${sensor.id}`);
   };
 
-  // Cancel editing
   const cancelEdit = () => {
     setPanelOpen(false);
     setEditingSensor(null);
   };
 
-  // Capture GPS for the editing sensor
-  const captureGPS = async () => {
-    if (!editingSensor) return;
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported in this browser.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const accuracyMeters = pos.coords.accuracy || 0;
-        const accuracyFt = Math.round(metersToFeet(accuracyMeters));
-        const capturedAt = new Date().toISOString();
-
-        setEditingSensor((prev) =>
-          prev ? { ...prev, gps: { lat, lng, accuracyFt, capturedAt } } : prev
-        );
-      },
-      (err) => {
-        console.error("GPS error", err);
-        alert(
-          "Unable to get GPS, please try again. (" +
-            (err.message || "unknown") +
-            ")"
-        );
-      },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 }
-    );
-  };
-
-  // Delete sensor (optional small helper)
-  const deleteSensor = (id: string) => {
-    if (!confirm("Delete this sensor?")) return;
-    setSensors((prev) => prev.filter((s) => s.id !== id));
-  };
-
-  // Site info
-  // const selectedSite = MOCK_SITES.find(s => s.id === selectedSiteId)!;
-
-  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
-
   const handleSelectSensor = (id: string) => {
     if (!selectedSensors.includes(id)) {
       setSelectedSensors((prev) => [...prev, id]);
+      setSearchTerm(""); // Clear search after selecting
     }
   };
 
@@ -267,20 +266,43 @@ const Service: React.FC = () => {
   };
 
   const handleSaveSelection = () => {
-    if (selectedSensors.length === 0) {
-      alert("No sensors selected!");
-      return;
-    }
-
+    if (!selectedSensors.length) return alert("No sensors selected!");
     console.log("Selected sensors:", selectedSensors);
     console.log("Remarks:", remarks);
-
-    alert("Saved successfully!");
-
-    // reset after save
+    // alert("Saved successfully!");
+     toast.success(`Saved successfully!`);
     setSelectedSensors([]);
     setRemarks("");
   };
+
+  const captureGPS = () => {
+    if (!editingSensor) return;
+    if (!navigator.geolocation) return alert("Geolocation not supported");
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const accuracyFt = Math.round(metersToFeet(pos.coords.accuracy || 0));
+        const capturedAt = new Date().toISOString();
+        setEditingSensor((prev) => prev ? { ...prev, gps: { lat, lng, accuracyFt, capturedAt } } : prev);
+      },
+      (err) => alert("Unable to get GPS: " + (err.message || "unknown"))
+    );
+  };
+
+  useEffect(() => {
+    if (!searchTerm) return;
+
+    const match = visibleSensors.find(
+      (s) => s.id.toLowerCase() === searchTerm.toLowerCase()
+    );
+
+    if (match && !selectedSensors.includes(match.id)) {
+      setSelectedSensors((prev) => [...prev, match.id]);
+      setSearchTerm(""); // <--- clears input immediately
+    }
+  }, [searchTerm, visibleSensors, selectedSensors]);
 
   return (
     <div>
@@ -339,12 +361,13 @@ const Service: React.FC = () => {
                 </SelectItem>
 
                 {/* Actual items */}
-                {MOCK_SITES.filter((s) => s.id !== "none").map((site) => (
+                {sites.filter((s: any) => s.id !== "none").map((site: any) => (
                   <SelectItem key={site.id} value={site.id}>
                     <div className="flex flex-col text-start">
                       <span className="font-semibold text-lg">{site.name}</span>
                       <span className="text-md text-muted-foreground">
-                        {site.info}
+                        {/* {site.info} {s.planned} */}
+                        {`${site.info}, ${site.planned} sensors planned`}
                       </span>
                     </div>
                   </SelectItem>
@@ -363,7 +386,6 @@ const Service: React.FC = () => {
                     + Add Sensor
                   </Button>
                 </div>
-
                 {/* CHIPS + SEARCH (Gmail style) */}
                 <div className="mb-4 border rounded-lg px-3 py-2 bg-white min-h-[50px] flex flex-wrap gap-2 items-center">
                   {selectedSensors.map((id) => (
@@ -381,7 +403,6 @@ const Service: React.FC = () => {
                       </button>
                     </span>
                   ))}
-
                   <input
                     className="outline-none flex-1 text-lg h-[50px]"
                     placeholder={
@@ -391,77 +412,46 @@ const Service: React.FC = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-
-                {/* <Alert className="bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"><div className="flex flex-wrap gap-2 items-center text-yellow-800 text-[clamp(14px,2vw,18px)] font-medium">
-                
-          <AlertCircle className="h-4 w-4 mr-2 text-yellow-600"  />
-          North Field drying faster than normal
-              </div>
-              </Alert> */}
-
                 {/* SENSOR LIST */}
-                <div className="space-y-3 max-h-[40vh] overflow-auto pb-6">
-                  {visibleSensors
-                    .filter((s) => !selectedSensors.includes(s.id)) // hide selected
-                    .filter((s) => {
-                      if (!searchTerm) return true;
-                      const t = searchTerm.toLowerCase();
-                      return (
-                        s.id.toLowerCase().includes(t) ||
-                        (s.label || "").toLowerCase().includes(t)
-                      );
-                    })
-                    .map((s) => (
-                      <div
-                        key={s.id}
-                        onClick={() => handleSelectSensor(s.id)}
-                        className="cursor-pointer  rounded-lg p-3 
-          shadow-sm hover:border-blue-400 hover:bg-blue-50 transition bg-yellow-100/60 border-l-4 border-yellow-400 rounded-md"
-                      >
-                        <div className="flex gap-4  items-center flex justify-between mob-wrap">
-                          <div className=" w-full">
-                            <div className="text-lg font-semibold">{s.id}</div>
-                            <div className="text-md text-muted-foreground mt-1 flex flex-wrap gap-4">
-                              <span>Depth: {s.depth ?? "—"}</span>
-                              <span>
-                                GPS:{" "}
-                                {s.gps
-                                  ? `captured (±${s.gps.accuracyFt} ft)`
-                                  : "Not captured"}
-                              </span>
-                              <span>Status: {s.status}</span>
-                            </div>
-                            {s.notes && (
-                              <div className="text-md mt-3  text-muted-foreground">
-                                Note: {s.notes}
+                {searchTerm.trim() !== "" && (
+                  <div className="space-y-3 max-h-[40vh] overflow-auto pb-6">
+                    {visibleSensors
+                      .filter((s) => !selectedSensors.includes(s.id)) // hide already selected
+                      .map((s) => (
+                        <div
+                          key={s.id}
+                          onClick={() => handleSelectSensor(s.id)}
+                          className="cursor-pointer rounded-lg p-3 
+          shadow-sm hover:border-blue-400 hover:bg-blue-50 transition bg-yellow-100/60 border-l-4 border-yellow-400"
+                        >
+                          <div className="flex gap-4 items-center justify-between mob-wrap">
+                            <div className="w-full">
+                              <div className="text-lg font-semibold">{s.id}</div>
+                              <div className="text-md text-muted-foreground mt-1 flex flex-wrap gap-4">
+                                <span>Depth: {s.depth ?? "—"}</span>
+                                <span>
+                                  GPS: {s.gps ? `captured (±${s.gps.accuracyFt} ft)` : "Not captured"}
+                                </span>
+                                <span>Status: {s.status}</span>
                               </div>
-                            )}
-                          </div>
-                          <div className="text-md text-muted-foreground mt-1 whitespace-nowrap">
-                            {s.installDate
-                              ? `Installed: ${format(
-                                  new Date(s.installDate),
-                                  "MMM d, yyyy"
-                                )}`
-                              : ""}
+                              {s.notes && (
+                                <div className="text-md mt-3 text-muted-foreground">
+                                  Note: {s.notes}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-md text-muted-foreground mt-1 whitespace-nowrap">
+                              {s.installDate
+                                ? `Installed: ${format(new Date(s.installDate), "MMM d, yyyy")}`
+                                : ""}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                  </div>
+                )}
 
-                  {/* No sensors found */}
-                  {visibleSensors.filter(
-                    (s) =>
-                      !selectedSensors.includes(s.id) &&
-                      (searchTerm
-                        ? s.id.toLowerCase().includes(searchTerm.toLowerCase())
-                        : true)
-                  ).length === 0 && (
-                    <div className="text-sm text-muted-foreground">
-                      No sensors found.
-                    </div>
-                  )}
-                </div>
+
 
                 {/* REMARKS INPUT */}
                 <div className="mt-4">
@@ -554,10 +544,10 @@ const Service: React.FC = () => {
                     Device metadata (read-only)
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>DevEUI: —</div>
-                    <div>Battery: —</div>
-                    <div>RF: —</div>
-                    <div>Last seen: —</div>
+                    <div>DevEUI: {editingSensor.devEUI}</div>
+                    <div>Battery: {editingSensor.battery}</div>
+                    <div>RF: {editingSensor.rf}</div>
+                    <div>Last seen: {editingSensor.lastSeen}</div>
                   </div>
                 </div>
 
@@ -694,8 +684,8 @@ const Service: React.FC = () => {
                       <div className="text-xs text-muted-foreground mt-1">
                         {editingSensor.gps
                           ? `Captured at ${new Date(
-                              editingSensor.gps.capturedAt
-                            ).toLocaleString()}`
+                            editingSensor.gps.capturedAt
+                          ).toLocaleString()}`
                           : ""}
                       </div>
                     </div>
@@ -763,18 +753,11 @@ const Service: React.FC = () => {
                 <div>
                   <Label className="text-md">Service history</Label>
                   <div className="bg-gray-50 rounded p-3 border border-gray-100 mt-2 text-sm">
-                    {editingSensor.history &&
-                    editingSensor.history.length > 0 ? (
-                      <ul className="list-disc pl-5 space-y-2">
-                        {editingSensor.history.map((h, idx) => (
-                          <li key={idx}>{h}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className="text-xs text-muted-foreground">
-                        No history available.
-                      </div>
-                    )}
+                    <ul className="list-disc pl-5 space-y-2">
+                      {MOCK_HISTORY?.map((item: string, idx: number) => (
+                        <li key={idx}>{item}</li> // <-- return JSX here
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>

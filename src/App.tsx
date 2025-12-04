@@ -1,3 +1,7 @@
+import React from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +17,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      {/* ---- React-Toastify Toast Container ---- */}
+      <ToastContainer position="top-right" autoClose={2000} />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />

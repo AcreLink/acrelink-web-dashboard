@@ -170,6 +170,11 @@ All colors MUST be HSL.
     padding: 0px !important;
 }
 
+.mob-wrap{
+flex-wrap: wrap !important;
+
+}
+
 }
 
 @media(max-width:400px) {
@@ -178,6 +183,12 @@ All colors MUST be HSL.
   font-size: 12px !important ;
   flex-wrap: wrap-reverse;
         height: auto;
+}
+
+.sensor-mob{
+  flex-wrap: wrap !important;
+  gap: 20px;
+  justify-content: center;
 }
 
 }

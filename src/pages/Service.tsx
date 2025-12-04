@@ -547,10 +547,10 @@ const Service: React.FC = () => {
                           className="cursor-pointer rounded-lg p-3 
           shadow-sm hover:border-blue-400 hover:bg-blue-50 transition bg-yellow-100/60 border-l-4 border-yellow-400"
                         >
-                          <div className="flex gap-2 md:gap-4 items-center justify-between mob-wrap">
+                          <div className="flex gap-1 md:gap-4 items-center justify-between mob-wrap">
                             <div className="w-full">
                               <div className="text-md md:text-lg font-semibold">{s.id}</div>
-                              <div className=" depth-font text-md  text-muted-foreground mt-1 flex flex-wrap gap-2 md:gap-4">
+                              <div className=" depth-font text-md  text-muted-foreground  flex flex-wrap gap-1 md:gap-4">
                                 <span>Depth: {s.depth ?? "—"}</span>
                                 <span>
                                   GPS: {s.gps ? `captured (±${s.gps.accuracyFt} ft)` : "Not captured"}
@@ -558,12 +558,12 @@ const Service: React.FC = () => {
                                 <span>Status: {s.status}</span>
                               </div>
                               {s.notes && (
-                                <div className="text-md mt-1 md:mt-3 text-muted-foreground">
+                                <div className="depth-font text-md mt-1 md:mt-3 text-muted-foreground">
                                   Note: {s.notes}
                                 </div>
                               )}
                             </div>
-                            <div className="text-md text-muted-foreground mt-1 whitespace-nowrap">
+                            <div className="text-md depth-font text-muted-foreground  whitespace-nowrap">
                               {s.installDate
                                 ? `Installed: ${format(new Date(s.installDate), "MMM d, yyyy")}`
                                 : ""}

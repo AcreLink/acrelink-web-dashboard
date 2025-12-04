@@ -177,6 +177,18 @@ flex-wrap: wrap !important;
 
 }
 
+@media(max-width:500px) {
+
+
+.depth-font {
+  font-size: 12px !important; 
+  display: grid;
+
+
+}
+}
+
+
 @media(max-width:400px) {
 .btn-style{
   padding: 10px 12px !important;
@@ -191,9 +203,5 @@ flex-wrap: wrap !important;
   justify-content: center;
 }
 
-.depth-font {
-  font-size: 14px !important; 
 
-
-}
 }

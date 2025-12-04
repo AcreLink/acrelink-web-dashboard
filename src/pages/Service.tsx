@@ -16,7 +16,6 @@ import { Calendar, QrCode } from "lucide-react";
 import acreLinkLogo from "@/assets/acrelink-logo.png";
 import { toast } from "react-toastify";
 
-
 const MOCK_HISTORY: string[] = [
   "2025-03-10 – Installed at 6–8 in, east field, Parker",
   "2025-04-15 – Checked connectivity, OK",
@@ -271,7 +270,6 @@ const loadInitialData = () => {
 const metersToFeet = (m: number) => m * 3.28084;
 // const makeId = () => `ACR-${Math.floor(Math.random() * 9000 + 1000)}`;
  
-
 // --- Main Component ---
 const Service: React.FC = () => {
   const { sensors: initialSensors, sites: initialSites } = loadInitialData();

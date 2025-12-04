@@ -414,10 +414,13 @@ const Service: React.FC = () => {
                 </div>
                 {/* SENSOR LIST */}
                 {searchTerm.trim() !== "" && (
-                  <div className="space-y-3 max-h-[40vh] overflow-auto pb-6">
+                  <div className="space-y-3 max-h-[40vh] overflow-auto  pb-6 border rounded-lg px-3 py-2 bg-white ">
+                    <div className="bg-white flex flex-col gap-3 p-2">
+                    
                     {visibleSensors
                       .filter((s) => !selectedSensors.includes(s.id)) // hide already selected
                       .map((s) => (
+                    
                         <div
                           key={s.id}
                           onClick={() => handleSelectSensor(s.id)}
@@ -447,7 +450,9 @@ const Service: React.FC = () => {
                             </div>
                           </div>
                         </div>
+                    
                       ))}
+                  </div>
                   </div>
                 )}
 
@@ -511,10 +516,10 @@ const Service: React.FC = () => {
               <div className="space-y-4 pb-24 mt-4">
                 {/* Sensor ID */}
                 <div className="mt-4 ">
-                  <Label className="text-md ">Sensor ID / Label</Label>
+                  <Label className="text-md font-semibold  ">Sensor ID / Label</Label>
                   <div className="flex items-center gap-2 mt-2">
                     <Input
-                      className=""
+                      className="p-3 text-lg font-medium flex-1 bg-white"
                       placeholder="ACR-0001"
                       value={editingSensor.id}
                       onChange={(e: any) =>
@@ -528,7 +533,7 @@ const Service: React.FC = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 px-3 py-2 bg-white"
                         onClick={() => alert("Scan QR - placeholder")}
                       >
                         <QrCode className="h-5 w-5" />
@@ -539,15 +544,15 @@ const Service: React.FC = () => {
                 {/* <div className="text-xs text-muted-foreground mt-1">Scan QR or enter ID manually.</div> */}
 
                 {/* Device metadata (read only) */}
-                <div className="bg-gray-50 rounded p-3 border border-gray-100">
-                  <div className="text-sm text-muted-foreground mb-2">
-                    Device metadata (read-only)
+                  <div className="text-md font-semibold ">
+                    Device metadata
                   </div>
+                <div className=" mt-2 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-3 ">
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>DevEUI: {editingSensor.devEUI}</div>
-                    <div>Battery: {editingSensor.battery}</div>
-                    <div>RF: {editingSensor.rf}</div>
-                    <div>Last seen: {editingSensor.lastSeen}</div>
+                    <div className="text-sm font-medium ">DevEUI: {editingSensor.devEUI}</div>
+                    <div className="text-sm font-medium ">Battery: {editingSensor.battery}</div>
+                    <div className="text-sm font-medium ">RF: {editingSensor.rf}</div>
+                    <div className="text-sm font-medium ">Last seen: {editingSensor.lastSeen}</div>
                   </div>
                 </div>
 
@@ -562,7 +567,7 @@ const Service: React.FC = () => {
                       )
                     }
                   >
-                    <SelectTrigger className="mt-2">
+                    <SelectTrigger className="mt-2 h-[50px] p-3 bg-white text-sm ">
                       <SelectValue placeholder="Select depth" />
                     </SelectTrigger>
                     <SelectContent>
@@ -579,47 +584,19 @@ const Service: React.FC = () => {
                   </Select>
                 </div>
 
-                {/* Install date */}
-                {/* <div>
-                <Label>Install date</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    type="date"
-                    value={editingSensor.installDate ?? format(new Date(), "yyyy-MM-dd")}
-                    onChange={(e: any) => setEditingSensor(prev => prev ? { ...prev, installDate: e.target.value } : prev)}
-                  />
-                  <div className="text-sm text-muted-foreground ml-2 flex items-center gap-1"><Calendar className="h-4 w-4" /> {editingSensor.installDate ? format(new Date(editingSensor.installDate), "PP") : ""}</div>
-                </div>
-              </div> */}
+                {/* Install Date */}
                 <div className="space-y-2 w-full">
                   <Label className="text-md font-semibold">Install Date</Label>
 
-                  <div className="rounded-xl border-2 border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 shadow-sm">
+                 
                     {/* Label + Icon */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <Calendar className="h-5 w-5 text-primary" />
-                      <span className="text-md font-medium text-gray-700">
-                        Select installation date
-                      </span>
-                    </div>
+                   
 
                     {/* Date Input */}
                     <div>
                       <Input
                         type="date"
-                        className="
-        w-full 
-        h-12 
-        rounded-lg 
-        border-gray-300 
-        bg-white 
-        shadow-inner 
-        text-[15px] 
-        px-3 
-        focus-visible:ring-2 
-        focus-visible:ring-primary 
-        focus-visible:border-primary
-      "
+                        className=" w-full block h-12 rounded-lg border-gray-300 bg-white text-[15px] px-3  focus-visible:ring-2  focus-visible:ring-primary focus-visible:border-primary"
                         value={
                           editingSensor.installDate ??
                           format(new Date(), "yyyy-MM-dd")
@@ -633,54 +610,42 @@ const Service: React.FC = () => {
                         }
                       />
 
-                      {/* Human readable date */}
-                      <div className="mt-3 pl-1 text-sm text-gray-600 flex items-center gap-2">
-                        {/* <Calendar className="h-4 w-4 text-muted-foreground" /> */}
-
-                        {editingSensor.installDate ? (
-                          <span className="font-medium">
-                            {format(
-                              new Date(editingSensor.installDate),
-                              "EEEE, MMM d, yyyy"
-                            )}
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground">
-                            No date selected
-                          </span>
-                        )}
-                      </div>
+                     
                     </div>
-                  </div>
+                  
                 </div>
 
                 {/* GPS capture */}
                 <div>
-                  <Label className="flex items-center gap-2 text-md mt-4 mb-3">
+                  <Label className="flex items-center gap-2 text-md font-semibold mt-4 mb-3">
                     GPS capture
                   </Label>
                   <div className="grid grid-cols-1 gap-2">
                     <div className="text-md grid grid-cols-1 gap-2">
-                      <div>
+
+                      <div className="rounded-lg text-sm border text-muted-foreground border-gray-300 bg-white p-3">
                         Latitude:{" "}
-                        <span className="font-medium">
+                        <span className="font-medium text-sm">
                           {editingSensor.gps?.lat ?? "—"}
                         </span>
                       </div>
-                      <div>
+
+                      <div className="rounded-lg text-sm border text-muted-foreground border-gray-300 bg-white p-3">
                         Longitude:{" "}
-                        <span className="font-medium">
+                        <span className="font-medium text-sm">
                           {editingSensor.gps?.lng ?? "—"}
                         </span>
                       </div>
-                      <div>
+
+                      <div className="rounded-lg text-sm border text-muted-foreground border-gray-300 bg-white p-3">
                         Accuracy:{" "}
-                        <span className="font-medium">
+                        <span className="font-medium text-sm">
                           {editingSensor.gps
                             ? `${editingSensor.gps.accuracyFt} ft`
                             : "—"}
                         </span>
                       </div>
+                      
                       <div className="text-xs text-muted-foreground mt-1">
                         {editingSensor.gps
                           ? `Captured at ${new Date(
@@ -690,11 +655,11 @@ const Service: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 justify-end mt-2">
                       <Button size="sm" onClick={captureGPS}>
                         Capture GPS
                       </Button>
-                      <Button
+                      {/* <Button
                         size="sm"
                         variant="ghost"
                         onClick={() =>
@@ -704,14 +669,14 @@ const Service: React.FC = () => {
                         }
                       >
                         Clear GPS
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </div>
 
                 {/* Status */}
                 <div className="mt-6">
-                  <Label className="text-md">Status</Label>
+                  <Label className="text-md font-semibold">Status</Label>
                   <Select
                     value={editingSensor.status ?? "Planned"}
                     onValueChange={(val) =>
@@ -720,7 +685,7 @@ const Service: React.FC = () => {
                       )
                     }
                   >
-                    <SelectTrigger className="mt-2 h-[50px]">
+                    <SelectTrigger className="mt-2 h-[50px] bg-white p-3 text-sm ">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -736,9 +701,9 @@ const Service: React.FC = () => {
 
                 {/* Notes */}
                 <div className="mt-6">
-                  <Label className="text-md ">Notes</Label>
+                  <Label className="text-md font-semibold ">Notes</Label>
                   <Textarea
-                    className="mt-2"
+                    className="mt-2 bg-white text-sm"
                     placeholder="Install details, location landmarks, issues, etc."
                     value={editingSensor.notes ?? ""}
                     onChange={(e: any) =>
@@ -751,7 +716,7 @@ const Service: React.FC = () => {
 
                 {/* Service history (read-only) */}
                 <div>
-                  <Label className="text-md">Service history</Label>
+                  <Label className="text-md font-semibold">Service history</Label>
                   <div className="bg-gray-50 rounded p-3 border border-gray-100 mt-2 text-sm">
                     <ul className="list-disc pl-5 space-y-2">
                       {MOCK_HISTORY?.map((item: string, idx: number) => (
@@ -763,7 +728,7 @@ const Service: React.FC = () => {
               </div>
 
               {/* Sticky actions */}
-              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 flex gap-3">
+              <div className=" bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 flex gap-3">
                 <div className="ml-auto flex gap-3">
                   <Button
                     className="flex-1"

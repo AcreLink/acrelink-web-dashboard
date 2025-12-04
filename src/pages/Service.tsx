@@ -470,7 +470,7 @@ const Service: React.FC = () => {
           </CardHeader>
           <CardContent className="pt-6 main-content-section">
             <Select value={selectedSiteId} onValueChange={setSelectedSiteId}>
-              <SelectTrigger className="h-[80px] border-2 rounded-lg p-4 focus:none focus:none focus:ring-offset-0 ">
+              <SelectTrigger className="h-[60px] md:h-[70px] border-2 rounded-lg p-4 focus:none focus:none focus:ring-offset-0 ">
                 <SelectValue placeholder="Select a site" />
               </SelectTrigger>
 
@@ -524,7 +524,7 @@ const Service: React.FC = () => {
                     </span>
                   ))}
                   <input
-                    className="outline-none flex-1 text-lg h-[50px]"
+                    className="outline-none flex-1 text-lg h-[38px] md:h-[45px]"
                     placeholder={
                       selectedSensors.length === 0 ? "Search sensors..." : ""
                     }

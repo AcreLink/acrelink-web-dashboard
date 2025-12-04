@@ -357,15 +357,15 @@ const Service: React.FC = () => {
               <SelectContent>
                 {/* Default placeholder (disabled) */}
                 <SelectItem value="none">
-                  <span className="opacity-60 text-lg">Select a site</span>
+                  <span className="opacity-60 text-md md:text-lg">Select a site</span>
                 </SelectItem>
 
                 {/* Actual items */}
                 {sites.filter((s: any) => s.id !== "none").map((site: any) => (
                   <SelectItem key={site.id} value={site.id}>
                     <div className="flex flex-col text-start">
-                      <span className="font-semibold text-lg">{site.name}</span>
-                      <span className="text-md text-muted-foreground">
+                      <span className="font-semibold text-md md:text-lg">{site.name}</span>
+                      <span className="text-md md:text-md text-muted-foreground">
                         {/* {site.info} {s.planned} */}
                         {`${site.info}, ${site.planned} sensors planned`}
                       </span>
@@ -387,7 +387,7 @@ const Service: React.FC = () => {
                   </Button>
                 </div>
                 {/* CHIPS + SEARCH (Gmail style) */}
-                <div className="mb-4 border rounded-lg px-3 py-2 bg-white min-h-[50px] flex flex-wrap gap-2 items-center">
+                <div className="mb-2 border rounded-lg px-3 py-2 bg-white min-h-[50px] flex flex-wrap gap-2 items-center">
                   {selectedSensors.map((id) => (
                     <span
                       key={id}
@@ -427,10 +427,10 @@ const Service: React.FC = () => {
                           className="cursor-pointer rounded-lg p-3 
           shadow-sm hover:border-blue-400 hover:bg-blue-50 transition bg-yellow-100/60 border-l-4 border-yellow-400"
                         >
-                          <div className="flex gap-4 items-center justify-between mob-wrap">
+                          <div className="flex gap-2 md:gap-4 items-center justify-between mob-wrap">
                             <div className="w-full">
-                              <div className="text-lg font-semibold">{s.id}</div>
-                              <div className="text-md text-muted-foreground mt-1 flex flex-wrap gap-4">
+                              <div className="text-md md:text-lg font-semibold">{s.id}</div>
+                              <div className=" depth-font text-md  text-muted-foreground mt-1 flex flex-wrap gap-2 md:gap-4">
                                 <span>Depth: {s.depth ?? "—"}</span>
                                 <span>
                                   GPS: {s.gps ? `captured (±${s.gps.accuracyFt} ft)` : "Not captured"}
@@ -438,7 +438,7 @@ const Service: React.FC = () => {
                                 <span>Status: {s.status}</span>
                               </div>
                               {s.notes && (
-                                <div className="text-md mt-3 text-muted-foreground">
+                                <div className="text-md mt-1 md:mt-3 text-muted-foreground">
                                   Note: {s.notes}
                                 </div>
                               )}

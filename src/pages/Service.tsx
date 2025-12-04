@@ -53,69 +53,190 @@ type Sensor = {
   lastSeen?: string;  // add this
 };
 
-const DEFAULT_MOCK_SENSORS: Sensor[] = [
-  {
-    id: "ACR-0001",
-    siteId: "demo-a",
-    depth: "Medium (6–12 in)",
-    installDate: "2025-03-10",
-    gps: null,
-    status: "Installed",
-    notes: "",
-    history: MOCK_HISTORY,
-    devEUI: "ABC123456790",
-    battery: "75%",
-    rf: "Poor",
-    lastSeen: "2025-04-01 10:30 AM",
-  },
-  {
-    id: "ACR-0002",
-    siteId: "demo-a",
-    depth: "Shallow (0–6 in)",
-    installDate: "2025-03-12",
-    gps: null,
-    status: "Planned",
-    notes: "",
-    history: MOCK_HISTORY,
-    devEUI: "ABC123456789",
-    battery: "85%",
-    rf: "Good",
-    lastSeen: "2025-04-01 10:30 AM",
-  },
-  {
-    id: "ACR-0101",
-    siteId: "demo-b",
-    depth: "Deep (12–24 in)",
-    installDate: "2025-02-20",
-    gps: {
-      lat: 36.12,
-      lng: -115.17,
-      accuracyFt: 14,
-      capturedAt: "2025-04-01T10:30:00Z",
-    },
-    status: "Installed",
-    notes: "Near oak tree",
-    history: MOCK_HISTORY,
-    devEUI: "ABC123456789",
-    battery: "85%",
-    rf: "Good",
-    lastSeen: "2025-04-01 10:30 AM",
-  },
-  {
-    id: "ACR-0201",
-    siteId: "demo-c",
-    depth: "Medium (6–12 in)",
-    installDate: "2025-01-10",
-    gps: null,
-    status: "Needs service",
-    notes: "Intermittent connectivity",
-    history: MOCK_HISTORY,
-    devEUI: "ABC123456789",
-    battery: "85%",
-    rf: "Good",
-    lastSeen: "2025-04-01 10:30 AM",
-  },
+// const DEFAULT_MOCK_SENSORS: Sensor[] = [
+//   {
+//     id: "ACR-0001",
+//     siteId: "demo-a",
+//     depth: "Medium (6–12 in)",
+//     installDate: "2025-03-10",
+//     gps: null,
+//     status: "Installed",
+//     notes: "",
+//     history: MOCK_HISTORY,
+//     devEUI: "ABC123456790",
+//     battery: "75%",
+//     rf: "Poor",
+//     lastSeen: "2025-04-01 10:30 AM",
+//   },
+//   {
+//     id: "ACR-0002",
+//     siteId: "demo-a",
+//     depth: "Shallow (0–6 in)",
+//     installDate: "2025-03-12",
+//     gps: null,
+//     status: "Planned",
+//     notes: "",
+//     history: MOCK_HISTORY,
+//     devEUI: "ABC123456789",
+//     battery: "85%",
+//     rf: "Good",
+//     lastSeen: "2025-04-01 10:30 AM",
+//   },
+//     {
+//     id: "ACR-0003",
+//     siteId: "demo-b",
+//     depth: "Medium (6–12 in)",
+//     installDate: "2025-03-10",
+//     gps: null,
+//     status: "Installed",
+//     notes: "",
+//     history: MOCK_HISTORY,
+//     devEUI: randomDevEUI(),
+//     battery: randomBattery(),
+//     rf: randomRF(),
+//     lastSeen: randomLastSeen(),
+//   },
+//   {
+//     id: "ACR-0101",
+//     siteId: "demo-b",
+//     depth: "Deep (12–24 in)",
+//     installDate: "2025-02-20",
+//     gps: {
+//       lat: 36.12,
+//       lng: -115.17,
+//       accuracyFt: 14,
+//       capturedAt: "2025-04-01T10:30:00Z",
+//     },
+//     status: "Installed",
+//     notes: "Near oak tree",
+//     history: MOCK_HISTORY,
+//     devEUI: "ABC123456789",
+//     battery: "85%",
+//     rf: "Good",
+//     lastSeen: "2025-04-01 10:30 AM",
+//   },
+//   {
+//     id: "ACR-0201",
+//     siteId: "demo-c",
+//     depth: "Medium (6–12 in)",
+//     installDate: "2025-01-10",
+//     gps: null,
+//     status: "Needs service",
+//     notes: "Intermittent connectivity",
+//     history: MOCK_HISTORY,
+//     devEUI: "ABC123456789",
+//     battery: "85%",
+//     rf: "Good",
+//     lastSeen: "2025-04-01 10:30 AM",
+//   },
+// ];
+// RANDOM HELPERS ------------------------
+
+const randomDevEUI = () =>
+  "ABC" + Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, "0");
+
+const randomBattery = () => `${Math.floor(Math.random() * 51) + 50}%`;
+
+const randomRF = () => ["Good", "Fair", "Poor"][Math.floor(Math.random() * 3)];
+
+const randomLastSeen = () => {
+  const start = new Date(2025, 0, 1).getTime();
+  const end = Date.now();
+  return new Date(start + Math.random() * (end - start)).toLocaleString("en-US", {
+    hour12: true,
+  });
+};
+
+const randomGPS = () => {
+  // World-wide random coordinates for demo
+  const lat = (Math.random() * 180 - 90).toFixed(6); // -90 to +90
+  const lng = (Math.random() * 360 - 180).toFixed(6); // -180 to +180
+  return {
+    lat: Number(lat),
+    lng: Number(lng),
+    accuracyFt: Math.floor(Math.random() * 50) + 5, // 5–55 ft
+    capturedAt: new Date().toISOString(),
+  };
+};
+
+const randomNote = () => {
+  const NOTES = [
+    "",
+    "Near oak tree",
+    "Close to irrigation line",
+    "Shaded area",
+    "High moisture zone",
+    "Rocky patch",
+    "Near fence corner",
+    "Installed inside crop row",
+    "Soil slightly compact",
+    "Check connectivity weekly",
+  ];
+  return NOTES[Math.floor(Math.random() * NOTES.length)];
+};
+
+// CONFIG -------------------------
+
+const DEPTHS = [
+  "Shallow (0–6 in)",
+  "Medium (6–12 in)",
+  "Deep (12–24 in)",
 ];
+
+const STATUSES: SensorStatus[] = ["Installed", "Planned", "Needs service", "Offline"];
+
+// SENSOR MAKER -------------------------
+
+const makeSensor = (id: string, siteId: string, depth: string, status: SensorStatus) => ({
+  id,
+  siteId,
+  depth,
+  installDate: "2025-03-10",
+  gps: randomGPS(),     // ⭐ added
+  status,
+  notes: randomNote(),  // ⭐ added
+  history: MOCK_HISTORY,
+  devEUI: randomDevEUI(),
+  battery: randomBattery(),
+  rf: randomRF(),
+  lastSeen: randomLastSeen(),
+});
+
+// AUTO GENERATOR ------------------------
+
+const generateSensors = (count: number, siteId: string, startNo: number) => {
+  const list = [];
+  for (let i = 0; i < count; i++) {
+    list.push(
+      makeSensor(
+        `ACR-${String(startNo + i).padStart(4, "0")}`,
+        siteId,
+        DEPTHS[i % DEPTHS.length],
+        STATUSES[i % STATUSES.length]
+      )
+    );
+  }
+  return list;
+};
+
+// FINAL DATA ----------------------------
+
+// demo-a → 10 sensors
+const DEMO_A = generateSensors(10, "demo-a", 1);
+
+// demo-b → 8 sensors
+const DEMO_B = generateSensors(8, "demo-b", 101);
+
+// demo-c → 7 sensors
+const DEMO_C = generateSensors(7, "demo-c", 201);
+
+// EXPORT
+const DEFAULT_MOCK_SENSORS: Sensor[] = [
+  ...DEMO_A,
+  ...DEMO_B,
+  ...DEMO_C,
+];
+
 
 // --- Load initial data from localStorage or fallback to mock ---
 const loadInitialData = () => {

@@ -16,12 +16,11 @@ import { Calendar, QrCode } from "lucide-react";
 import acreLinkLogo from "@/assets/acrelink-logo.png";
 import { toast } from "react-toastify";
 
-
 const MOCK_HISTORY: string[] = [
   "2025-03-10 – Installed at 6–8 in, east field, Parker",
   "2025-04-15 – Checked connectivity, OK",
 ];
-
+ 
 // --- Mock Data (for first load only) ---
 const MOCK_SITES = [
   { id: "none", name: "Select a site", info: "" },
@@ -29,9 +28,9 @@ const MOCK_SITES = [
   { id: "demo-b", name: "Demo Site B", info: "Orchard" },
   { id: "demo-c", name: "Demo Site C", info: "Wheat Farm" },
 ];
-
+ 
 type SensorStatus = "Planned" | "Installed" | "Needs service" | "Offline";
-
+ 
 type Sensor = {
   id: string;
   label?: string;
@@ -52,7 +51,7 @@ type Sensor = {
   rf?: string;        // add this
   lastSeen?: string;  // add this
 };
-
+ 
 // const DEFAULT_MOCK_SENSORS: Sensor[] = [
 //   {
 //     id: "ACR-0001",
@@ -131,14 +130,14 @@ type Sensor = {
 //   },
 // ];
 // RANDOM HELPERS ------------------------
-
+ 
 const randomDevEUI = () =>
   "ABC" + Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, "0");
-
+ 
 const randomBattery = () => `${Math.floor(Math.random() * 51) + 50}%`;
-
+ 
 const randomRF = () => ["Good", "Fair", "Poor"][Math.floor(Math.random() * 3)];
-
+ 
 const randomLastSeen = () => {
   const start = new Date(2025, 0, 1).getTime();
   const end = Date.now();
@@ -146,7 +145,7 @@ const randomLastSeen = () => {
     hour12: true,
   });
 };
-
+ 
 const randomGPS = () => {
   // World-wide random coordinates for demo
   const lat = (Math.random() * 180 - 90).toFixed(6); // -90 to +90
@@ -158,7 +157,7 @@ const randomGPS = () => {
     capturedAt: new Date().toISOString(),
   };
 };
-
+ 
 const randomNote = () => {
   const NOTES = [
     "",
@@ -174,19 +173,19 @@ const randomNote = () => {
   ];
   return NOTES[Math.floor(Math.random() * NOTES.length)];
 };
-
+ 
 // CONFIG -------------------------
-
+ 
 const DEPTHS = [
   "Shallow (0–6 in)",
   "Medium (6–12 in)",
   "Deep (12–24 in)",
 ];
-
+ 
 const STATUSES: SensorStatus[] = ["Installed", "Planned", "Needs service", "Offline"];
-
+ 
 // SENSOR MAKER -------------------------
-
+ 
 const makeSensor = (id: string, siteId: string, depth: string, status: SensorStatus) => ({
   id,
   siteId,
@@ -201,9 +200,9 @@ const makeSensor = (id: string, siteId: string, depth: string, status: SensorSta
   rf: randomRF(),
   lastSeen: randomLastSeen(),
 });
-
+ 
 // AUTO GENERATOR ------------------------
-
+ 
 const generateSensors = (count: number, siteId: string, startNo: number) => {
   const list = [];
   for (let i = 0; i < count; i++) {
@@ -218,40 +217,40 @@ const generateSensors = (count: number, siteId: string, startNo: number) => {
   }
   return list;
 };
-
+ 
 // FINAL DATA ----------------------------
-
+ 
 // demo-a → 10 sensors
 const DEMO_A = generateSensors(10, "demo-a", 1);
-
+ 
 // demo-b → 8 sensors
 const DEMO_B = generateSensors(8, "demo-b", 101);
-
+ 
 // demo-c → 7 sensors
 const DEMO_C = generateSensors(7, "demo-c", 201);
-
+ 
 // EXPORT
 const DEFAULT_MOCK_SENSORS: Sensor[] = [
   ...DEMO_A,
   ...DEMO_B,
   ...DEMO_C,
 ];
-
-
+ 
+ 
 // --- Load initial data from localStorage or fallback to mock ---
 const loadInitialData = () => {
   const storedSensors = localStorage.getItem("acrelink_service_sensors");
   const storedSites = localStorage.getItem("acrelink_sites");
-
+ 
   let sensors: Sensor[] = storedSensors
     ? JSON.parse(storedSensors)
     : DEFAULT_MOCK_SENSORS;
-
+ 
   // Save sensors if not present in localStorage
   if (!storedSensors) {
     localStorage.setItem("acrelink_service_sensors", JSON.stringify(sensors));
   }
-
+ 
   let sites = storedSites
     ? JSON.parse(storedSites)
     : MOCK_SITES.map((site) => {
@@ -259,18 +258,18 @@ const loadInitialData = () => {
       const plannedCount = sensors.filter((s) => s.siteId === site.id).length;
       return { ...site, planned: plannedCount };
     });
-
+ 
   if (!storedSites) {
     localStorage.setItem("acrelink_sites", JSON.stringify(sites));
   }
-
+ 
   return { sensors, sites };
 };
-
+ 
 // --- Utility functions ---
 const metersToFeet = (m: number) => m * 3.28084;
 // const makeId = () => `ACR-${Math.floor(Math.random() * 9000 + 1000)}`;
-
+ 
 // --- Main Component ---
 const Service: React.FC = () => {
   const { sensors: initialSensors, sites: initialSites } = loadInitialData();
@@ -478,15 +477,15 @@ const Service: React.FC = () => {
               <SelectContent>
                 {/* Default placeholder (disabled) */}
                 <SelectItem value="none">
-                  <span className="opacity-60 text-lg">Select a site</span>
+                  <span className="opacity-60 text-md md:text-lg">Select a site</span>
                 </SelectItem>
 
                 {/* Actual items */}
                 {sites.filter((s: any) => s.id !== "none").map((site: any) => (
                   <SelectItem key={site.id} value={site.id}>
                     <div className="flex flex-col text-start">
-                      <span className="font-semibold text-lg">{site.name}</span>
-                      <span className="text-md text-muted-foreground">
+                      <span className="font-semibold text-md md:text-lg">{site.name}</span>
+                      <span className="text-md md:text-md text-muted-foreground">
                         {/* {site.info} {s.planned} */}
                         {`${site.info}, ${site.planned} sensors planned`}
                       </span>
@@ -508,7 +507,7 @@ const Service: React.FC = () => {
                   </Button>
                 </div>
                 {/* CHIPS + SEARCH (Gmail style) */}
-                <div className="mb-4 border rounded-lg px-3 py-2 bg-white min-h-[50px] flex flex-wrap gap-2 items-center">
+                <div className="mb-2 border rounded-lg px-3 py-2 bg-white min-h-[50px] flex flex-wrap gap-2 items-center">
                   {selectedSensors.map((id) => (
                     <span
                       key={id}
@@ -548,10 +547,10 @@ const Service: React.FC = () => {
                           className="cursor-pointer rounded-lg p-3 
           shadow-sm hover:border-blue-400 hover:bg-blue-50 transition bg-yellow-100/60 border-l-4 border-yellow-400"
                         >
-                          <div className="flex gap-4 items-center justify-between mob-wrap">
+                          <div className="flex gap-2 md:gap-4 items-center justify-between mob-wrap">
                             <div className="w-full">
-                              <div className="text-lg font-semibold">{s.id}</div>
-                              <div className="text-md text-muted-foreground mt-1 flex flex-wrap gap-4">
+                              <div className="text-md md:text-lg font-semibold">{s.id}</div>
+                              <div className=" depth-font text-md  text-muted-foreground mt-1 flex flex-wrap gap-2 md:gap-4">
                                 <span>Depth: {s.depth ?? "—"}</span>
                                 <span>
                                   GPS: {s.gps ? `captured (±${s.gps.accuracyFt} ft)` : "Not captured"}
@@ -559,7 +558,7 @@ const Service: React.FC = () => {
                                 <span>Status: {s.status}</span>
                               </div>
                               {s.notes && (
-                                <div className="text-md mt-3 text-muted-foreground">
+                                <div className="text-md mt-1 md:mt-3 text-muted-foreground">
                                   Note: {s.notes}
                                 </div>
                               )}

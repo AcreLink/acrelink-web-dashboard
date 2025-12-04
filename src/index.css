@@ -191,5 +191,9 @@ flex-wrap: wrap !important;
   justify-content: center;
 }
 
-}
+.depth-font {
+  font-size: 14px !important; 
 
+
+}
+}

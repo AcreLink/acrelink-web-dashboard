@@ -519,7 +519,7 @@ const Service: React.FC = () => {
                   <Label className="text-md font-semibold  ">Sensor ID / Label</Label>
                   <div className="flex items-center gap-2 mt-2">
                     <Input
-                      className="p-3 text-lg font-medium flex-1 bg-white"
+                      className="p-3 text-sm font-medium flex-1 bg-white"
                       placeholder="ACR-0001"
                       value={editingSensor.id}
                       onChange={(e: any) =>
@@ -548,7 +548,7 @@ const Service: React.FC = () => {
                     Device metadata
                   </div>
                 <div className=" mt-2 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-3 ">
-                  <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                     <div className="text-sm font-medium ">DevEUI: {editingSensor.devEUI}</div>
                     <div className="text-sm font-medium ">Battery: {editingSensor.battery}</div>
                     <div className="text-sm font-medium ">RF: {editingSensor.rf}</div>

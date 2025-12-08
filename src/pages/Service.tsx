@@ -16,6 +16,8 @@ import { Calendar, QrCode } from "lucide-react";
 import acreLinkLogo from "@/assets/acrelink-logo.png";
 import { toast } from "react-toastify";
 import { Modal } from "@/components/ui/modal";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const MOCK_HISTORY: string[] = [
   "2025-03-10 – Installed at 6–8 in, east field, Parker",
@@ -544,11 +546,21 @@ const Service: React.FC = () => {
                                   </span>
                                   <span>Status: {s.status}</span>
                                 </div>
-                                {s.notes && (
+                                {/* {s.notes && (
                                   <div className="depth-font text-md mt-1 md:mt-3 text-muted-foreground">
                                     Note: {s.notes}
                                   </div>
+                                )} */}
+                                {s.notes && (
+                                  <div className="depth-font text-md mt-1 md:mt-3 text-muted-foreground">
+                                    <span className="font-medium">Note: </span>
+                                    <div
+                                      className="prose prose-sm max-w-none inline"
+                                      dangerouslySetInnerHTML={{ __html: s.notes }}
+                                    />
+                                  </div>
                                 )}
+
                               </div>
                               <div className="text-md depth-font text-muted-foreground  whitespace-nowrap">
                                 {s.installDate
@@ -818,7 +830,7 @@ const Service: React.FC = () => {
                 </div>
 
                 {/* Notes */}
-                <div className="mt-6">
+                {/* <div className="mt-6">
                   <Label className="text-md font-semibold ">Notes</Label>
                   <Textarea
                     className="mt-2 bg-white text-sm"
@@ -830,7 +842,26 @@ const Service: React.FC = () => {
                       )
                     }
                   />
+                </div> */}
+                {/* Notes */}
+                <div className="mt-6">
+                  <Label className="text-md font-semibold">Notes</Label>
+
+                  <div className="mt-2 bg-white border rounded-lg">
+                    <ReactQuill
+                      theme="snow"
+                      value={editingSensor?.notes ?? ""}
+                      onChange={(value) =>
+                        setEditingSensor((prev) =>
+                          prev ? { ...prev, notes: value } : prev
+                        )
+                      }
+                      placeholder="Install details, location landmarks, issues, etc."
+                      className="text-sm [&_.ql-container]:min-h-[120px]"
+                    />
+                  </div>
                 </div>
+
 
                 {/* Service history (read-only) */}
                 <div>

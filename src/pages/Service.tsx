@@ -15,12 +15,13 @@ import { format } from "date-fns";
 import { Calendar, QrCode } from "lucide-react";
 import acreLinkLogo from "@/assets/acrelink-logo.png";
 import { toast } from "react-toastify";
+import { Modal } from "@/components/ui/modal";
 
 const MOCK_HISTORY: string[] = [
   "2025-03-10 – Installed at 6–8 in, east field, Parker",
   "2025-04-15 – Checked connectivity, OK",
 ];
- 
+
 // --- Mock Data (for first load only) ---
 const MOCK_SITES = [
   { id: "none", name: "Select a site", info: "" },
@@ -28,9 +29,9 @@ const MOCK_SITES = [
   { id: "demo-b", name: "Demo Site B", info: "Orchard" },
   { id: "demo-c", name: "Demo Site C", info: "Wheat Farm" },
 ];
- 
+
 type SensorStatus = "Planned" | "Installed" | "Needs service" | "Offline";
- 
+
 type Sensor = {
   id: string;
   label?: string;
@@ -46,98 +47,27 @@ type Sensor = {
   status?: SensorStatus;
   notes?: string;
   history?: string[];
-  devEUI?: string;    // add this
-  battery?: string;   // add this
-  rf?: string;        // add this
-  lastSeen?: string;  // add this
+  devEUI?: string;
+  battery?: string;
+  rf?: string;
+  lastSeen?: string;
 };
- 
-// const DEFAULT_MOCK_SENSORS: Sensor[] = [
-//   {
-//     id: "ACR-0001",
-//     siteId: "demo-a",
-//     depth: "Medium (6–12 in)",
-//     installDate: "2025-03-10",
-//     gps: null,
-//     status: "Installed",
-//     notes: "",
-//     history: MOCK_HISTORY,
-//     devEUI: "ABC123456790",
-//     battery: "75%",
-//     rf: "Poor",
-//     lastSeen: "2025-04-01 10:30 AM",
-//   },
-//   {
-//     id: "ACR-0002",
-//     siteId: "demo-a",
-//     depth: "Shallow (0–6 in)",
-//     installDate: "2025-03-12",
-//     gps: null,
-//     status: "Planned",
-//     notes: "",
-//     history: MOCK_HISTORY,
-//     devEUI: "ABC123456789",
-//     battery: "85%",
-//     rf: "Good",
-//     lastSeen: "2025-04-01 10:30 AM",
-//   },
-//     {
-//     id: "ACR-0003",
-//     siteId: "demo-b",
-//     depth: "Medium (6–12 in)",
-//     installDate: "2025-03-10",
-//     gps: null,
-//     status: "Installed",
-//     notes: "",
-//     history: MOCK_HISTORY,
-//     devEUI: randomDevEUI(),
-//     battery: randomBattery(),
-//     rf: randomRF(),
-//     lastSeen: randomLastSeen(),
-//   },
-//   {
-//     id: "ACR-0101",
-//     siteId: "demo-b",
-//     depth: "Deep (12–24 in)",
-//     installDate: "2025-02-20",
-//     gps: {
-//       lat: 36.12,
-//       lng: -115.17,
-//       accuracyFt: 14,
-//       capturedAt: "2025-04-01T10:30:00Z",
-//     },
-//     status: "Installed",
-//     notes: "Near oak tree",
-//     history: MOCK_HISTORY,
-//     devEUI: "ABC123456789",
-//     battery: "85%",
-//     rf: "Good",
-//     lastSeen: "2025-04-01 10:30 AM",
-//   },
-//   {
-//     id: "ACR-0201",
-//     siteId: "demo-c",
-//     depth: "Medium (6–12 in)",
-//     installDate: "2025-01-10",
-//     gps: null,
-//     status: "Needs service",
-//     notes: "Intermittent connectivity",
-//     history: MOCK_HISTORY,
-//     devEUI: "ABC123456789",
-//     battery: "85%",
-//     rf: "Good",
-//     lastSeen: "2025-04-01 10:30 AM",
-//   },
-// ];
-// RANDOM HELPERS ------------------------
- 
+
+type Site = {
+  id: string;        // "demo-a"
+  name: string;      // "Demo Site A"
+  info?: string;     // "Hay Farm"
+  planned?: number;  // number of sensors
+};
+
+
 const randomDevEUI = () =>
   "ABC" + Math.floor(Math.random() * 1_000_000_000).toString().padStart(9, "0");
- 
+
 const randomBattery = () => `${Math.floor(Math.random() * 51) + 50}%`;
- 
+
 const randomRF = () => ["Good", "Fair", "Poor"][Math.floor(Math.random() * 3)];
- 
+
 const randomLastSeen = () => {
   const start = new Date(2025, 0, 1).getTime();
   const end = Date.now();
@@ -145,7 +75,7 @@ const randomLastSeen = () => {
     hour12: true,
   });
 };
- 
+
 const randomGPS = () => {
   // World-wide random coordinates for demo
   const lat = (Math.random() * 180 - 90).toFixed(6); // -90 to +90
@@ -157,7 +87,7 @@ const randomGPS = () => {
     capturedAt: new Date().toISOString(),
   };
 };
- 
+
 const randomNote = () => {
   const NOTES = [
     "",
@@ -173,19 +103,19 @@ const randomNote = () => {
   ];
   return NOTES[Math.floor(Math.random() * NOTES.length)];
 };
- 
+
 // CONFIG -------------------------
- 
+
 const DEPTHS = [
   "Shallow (0–6 in)",
   "Medium (6–12 in)",
   "Deep (12–24 in)",
 ];
- 
+
 const STATUSES: SensorStatus[] = ["Installed", "Planned", "Needs service", "Offline"];
- 
+
 // SENSOR MAKER -------------------------
- 
+
 const makeSensor = (id: string, siteId: string, depth: string, status: SensorStatus) => ({
   id,
   siteId,
@@ -200,9 +130,9 @@ const makeSensor = (id: string, siteId: string, depth: string, status: SensorSta
   rf: randomRF(),
   lastSeen: randomLastSeen(),
 });
- 
+
 // AUTO GENERATOR ------------------------
- 
+
 const generateSensors = (count: number, siteId: string, startNo: number) => {
   const list = [];
   for (let i = 0; i < count; i++) {
@@ -217,40 +147,40 @@ const generateSensors = (count: number, siteId: string, startNo: number) => {
   }
   return list;
 };
- 
+
 // FINAL DATA ----------------------------
- 
+
 // demo-a → 10 sensors
 const DEMO_A = generateSensors(10, "demo-a", 1);
- 
+
 // demo-b → 8 sensors
 const DEMO_B = generateSensors(8, "demo-b", 101);
- 
+
 // demo-c → 7 sensors
 const DEMO_C = generateSensors(7, "demo-c", 201);
- 
+
 // EXPORT
 const DEFAULT_MOCK_SENSORS: Sensor[] = [
   ...DEMO_A,
   ...DEMO_B,
   ...DEMO_C,
 ];
- 
- 
+
+
 // --- Load initial data from localStorage or fallback to mock ---
 const loadInitialData = () => {
   const storedSensors = localStorage.getItem("acrelink_service_sensors");
   const storedSites = localStorage.getItem("acrelink_sites");
- 
+
   let sensors: Sensor[] = storedSensors
     ? JSON.parse(storedSensors)
     : DEFAULT_MOCK_SENSORS;
- 
+
   // Save sensors if not present in localStorage
   if (!storedSensors) {
     localStorage.setItem("acrelink_service_sensors", JSON.stringify(sensors));
   }
- 
+
   let sites = storedSites
     ? JSON.parse(storedSites)
     : MOCK_SITES.map((site) => {
@@ -258,24 +188,25 @@ const loadInitialData = () => {
       const plannedCount = sensors.filter((s) => s.siteId === site.id).length;
       return { ...site, planned: plannedCount };
     });
- 
+
   if (!storedSites) {
     localStorage.setItem("acrelink_sites", JSON.stringify(sites));
   }
- 
+
   return { sensors, sites };
 };
- 
+
 // --- Utility functions ---
 const metersToFeet = (m: number) => m * 3.28084;
 // const makeId = () => `ACR-${Math.floor(Math.random() * 9000 + 1000)}`;
- 
+
 // --- Main Component ---
 const Service: React.FC = () => {
   const { sensors: initialSensors, sites: initialSites } = loadInitialData();
 
   const [sensors, setSensors] = useState<Sensor[]>(initialSensors);
-  const [sites, setSites] = useState(initialSites);
+  // const [sites, setSites] = useState(initialSites);
+  const [sites, setSites] = useState<Site[]>(initialSites);
   const [selectedSiteId, setSelectedSiteId] = useState("none");
   const [searchTerm, setSearchTerm] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
@@ -283,7 +214,13 @@ const Service: React.FC = () => {
   const [remarks, setRemarks] = useState("");
   const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
   const [techName] = useState("Parker");
-  console.log(editingSensor)
+  const [addSiteOpen, setAddSiteOpen] = useState(false);
+  const [newSite, setNewSite] = useState<Site>({
+    id: "",
+    name: "",
+    info: "",
+  });
+
   // --- Persist sensors and update planned count ---
   useEffect(() => {
     localStorage.setItem("acrelink_service_sensors", JSON.stringify(sensors));
@@ -351,10 +288,10 @@ const Service: React.FC = () => {
     if (!sensor?.depth) return toast.error("Depth cannot be select!");
 
     // Check if ID already exists (excluding the current editing sensor if editing)
-    const exists = sensors.some(
-      (s) => s.id === id && s !== editingSensor
-    );
-    if (exists) return toast.error(`Sensor ID "${id}" already exists!`);
+    // const exists = sensors.some(
+    //   (s) => s.id === id && s !== editingSensor
+    // );
+    // if (exists) return toast.error(`Sensor ID "${id}" already exists!`);
     setSensors((prev) => {
       const idx = prev.findIndex((s) => s.id === sensor.id);
       if (idx >= 0) {
@@ -390,7 +327,7 @@ const Service: React.FC = () => {
     console.log("Selected sensors:", selectedSensors);
     console.log("Remarks:", remarks);
     // alert("Saved successfully!");
-     toast.success(`Saved successfully!`);
+    toast.success(`Saved successfully!`);
     setSelectedSensors([]);
     setRemarks("");
   };
@@ -423,6 +360,45 @@ const Service: React.FC = () => {
       setSearchTerm(""); // <--- clears input immediately
     }
   }, [searchTerm, visibleSensors, selectedSensors]);
+
+  const generateSiteId = (name: string) =>
+    name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+
+
+  const saveNewSite = () => {
+    if (!newSite.name.trim()) {
+      toast.error("Site name is required");
+      return;
+    }
+
+    if (!newSite.info.trim()) {
+      toast.error("Site info is required");
+      return;
+    }
+
+    if (sites.some((s) => s.id === newSite.id)) {
+      toast.error("Site already exists");
+      return;
+    }
+
+    const updatedSites = [
+      ...sites,
+      { ...newSite, planned: 0 },
+    ];
+
+    setSites(updatedSites);
+    localStorage.setItem("acrelink_sites", JSON.stringify(updatedSites));
+
+    toast.success("Site added successfully ✅");
+
+    setAddSiteOpen(false);
+    setNewSite({ id: "", name: "", info: "" });
+  };
+
 
   return (
     <div>
@@ -464,9 +440,20 @@ const Service: React.FC = () => {
         {/* Step 1 - site selector */}
         <Card className="mb-8 shadow-industrial-lg border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5 main-content-p0">
           <CardHeader className="border-b-2 border-border/50 bg-card/50 main-content-section">
-            <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-semiBold text-foreground flex items-center">
-              Select site
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-[clamp(20px,2vw,30px)] font-display font-semiBold text-foreground flex items-center">
+                Select site
+              </CardTitle>
+              <div>
+                <button
+                  onClick={() => setAddSiteOpen(true)}
+                  className="px-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90"
+                >
+                  Add Site
+                </button>
+              </div>
+            </div>
+
           </CardHeader>
           <CardContent className="pt-6 main-content-section">
             <Select value={selectedSiteId} onValueChange={setSelectedSiteId}>
@@ -536,47 +523,58 @@ const Service: React.FC = () => {
                 {searchTerm.trim() !== "" && (
                   <div className="space-y-3 max-h-[40vh] overflow-auto  pb-6 border rounded-lg px-3 py-2 bg-white ">
                     <div className="bg-white flex flex-col gap-3 p-2">
-                    
-                    {visibleSensors
-                      .filter((s) => !selectedSensors.includes(s.id)) // hide already selected
-                      .map((s) => (
-                    
-                        <div
-                          key={s.id}
-                          onClick={() => handleSelectSensor(s.id)}
-                          className="cursor-pointer rounded-lg p-3 
+
+                      {visibleSensors
+                        .filter((s) => !selectedSensors.includes(s.id)) // hide already selected
+                        .map((s) => (
+
+                          <div
+                            key={s.id}
+                            onClick={() => handleSelectSensor(s.id)}
+                            className="cursor-pointer rounded-lg p-3 
           shadow-sm hover:border-blue-400 hover:bg-blue-50 transition bg-yellow-100/60 border-l-4 border-yellow-400"
-                        >
-                          <div className="flex gap-1 md:gap-4 items-center justify-between mob-wrap">
-                            <div className="w-full">
-                              <div className="text-md md:text-lg font-semibold">{s.id}</div>
-                              <div className=" depth-font text-md  text-muted-foreground  flex flex-wrap gap-1 md:gap-4">
-                                <span>Depth: {s.depth ?? "—"}</span>
-                                <span>
-                                  GPS: {s.gps ? `captured (±${s.gps.accuracyFt} ft)` : "Not captured"}
-                                </span>
-                                <span>Status: {s.status}</span>
-                              </div>
-                              {s.notes && (
-                                <div className="depth-font text-md mt-1 md:mt-3 text-muted-foreground">
-                                  Note: {s.notes}
+                          >
+                            <div className="flex gap-1 md:gap-4 items-center justify-between mob-wrap">
+                              <div className="w-full">
+                                <div className="text-md md:text-lg font-semibold">{s.id}</div>
+                                <div className=" depth-font text-md  text-muted-foreground  flex flex-wrap gap-1 md:gap-4">
+                                  <span>Depth: {s.depth ?? "—"}</span>
+                                  <span>
+                                    GPS: {s.gps ? `captured (±${s.gps.accuracyFt} ft)` : "Not captured"}
+                                  </span>
+                                  <span>Status: {s.status}</span>
                                 </div>
-                              )}
-                            </div>
-                            <div className="text-md depth-font text-muted-foreground  whitespace-nowrap">
-                              {s.installDate
-                                ? `Installed: ${format(new Date(s.installDate), "MMM d, yyyy")}`
-                                : ""}
+                                {s.notes && (
+                                  <div className="depth-font text-md mt-1 md:mt-3 text-muted-foreground">
+                                    Note: {s.notes}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-md depth-font text-muted-foreground  whitespace-nowrap">
+                                {s.installDate
+                                  ? `Installed: ${format(new Date(s.installDate), "MMM d, yyyy")}`
+                                  : ""}
+                              </div>
+
+                              {/* RIGHT SIDE → EDIT BUTTON */}
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation(); // ✅ card click se roke
+                                  openEdit(s);         // ✅ edit panel open
+                                }}
+                              >
+                                Edit
+
+                              </Button>
                             </div>
                           </div>
-                        </div>
-                    
-                      ))}
-                  </div>
+
+                        ))}
+                    </div>
                   </div>
                 )}
-
-
 
                 {/* REMARKS INPUT */}
                 <div className="mt-4">
@@ -664,9 +662,9 @@ const Service: React.FC = () => {
                 {/* <div className="text-xs text-muted-foreground mt-1">Scan QR or enter ID manually.</div> */}
 
                 {/* Device metadata (read only) */}
-                  <div className="text-md font-semibold ">
-                    Device metadata
-                  </div>
+                <div className="text-md font-semibold ">
+                  Device metadata
+                </div>
                 <div className=" mt-2 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-3 ">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                     <div className="text-sm font-medium ">DevEUI: {editingSensor.devEUI}</div>
@@ -708,31 +706,31 @@ const Service: React.FC = () => {
                 <div className="space-y-2 w-full">
                   <Label className="text-md font-semibold">Install Date</Label>
 
-                 
-                    {/* Label + Icon */}
-                   
 
-                    {/* Date Input */}
-                    <div>
-                      <Input
-                        type="date"
-                        className=" w-full block h-12 rounded-lg border-gray-300 bg-white text-[15px] px-3  focus-visible:ring-2  focus-visible:ring-primary focus-visible:border-primary"
-                        value={
-                          editingSensor.installDate ??
-                          format(new Date(), "yyyy-MM-dd")
-                        }
-                        onChange={(e: any) =>
-                          setEditingSensor((prev) =>
-                            prev
-                              ? { ...prev, installDate: e.target.value }
-                              : prev
-                          )
-                        }
-                      />
+                  {/* Label + Icon */}
 
-                     
-                    </div>
-                  
+
+                  {/* Date Input */}
+                  <div>
+                    <Input
+                      type="date"
+                      className=" w-full block h-12 rounded-lg border-gray-300 bg-white text-[15px] px-3  focus-visible:ring-2  focus-visible:ring-primary focus-visible:border-primary"
+                      value={
+                        editingSensor.installDate ??
+                        format(new Date(), "yyyy-MM-dd")
+                      }
+                      onChange={(e: any) =>
+                        setEditingSensor((prev) =>
+                          prev
+                            ? { ...prev, installDate: e.target.value }
+                            : prev
+                        )
+                      }
+                    />
+
+
+                  </div>
+
                 </div>
 
                 {/* GPS capture */}
@@ -765,7 +763,7 @@ const Service: React.FC = () => {
                             : "—"}
                         </span>
                       </div>
-                      
+
                       <div className="text-xs text-muted-foreground mt-1">
                         {editingSensor.gps
                           ? `Captured at ${new Date(
@@ -867,6 +865,60 @@ const Service: React.FC = () => {
           </div>
         )}
       </div>
+      <Modal
+        open={addSiteOpen}
+        onOpenChange={setAddSiteOpen}
+        title="Add New Site"
+        description="Create a new site for managing sensors"
+      >
+        <div className="space-y-4">
+          {/* Site Name */}
+          <div className="space-y-2">
+            <Label>Site Name</Label>
+            <Input
+              placeholder="Enter site name"
+              value={newSite.name}
+              onChange={(e) => {
+                const name = e.target.value;
+
+                setNewSite({
+                  ...newSite,
+                  name,
+                  id: generateSiteId(name), // ✅ auto lowercase id
+                });
+              }}
+            />
+          </div>
+          {/* Site Info */}
+          <div className="space-y-2">
+            <Label>Site Info</Label>
+            <Input
+              placeholder="e.g. Rice Farm"
+              value={newSite.info}
+              onChange={(e) =>
+                setNewSite({ ...newSite, info: e.target.value })
+              }
+            />
+          </div>
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setAddSiteOpen(false);
+                setNewSite({ id: "", name: "", info: "" }); // ✅ reset
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button onClick={saveNewSite}>
+              Save Site
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
     </div>
   );
 };
